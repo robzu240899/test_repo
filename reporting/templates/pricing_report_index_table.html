@@ -1,0 +1,44 @@
+<html>
+<body>
+{% if table_data %}
+
+<h1>Pricing Report Index Table</h1>
+
+{% for bg_code, bg_data in table_data.items %}
+
+    <h3>Billing Group: {{bg_data.full_name}}</p>
+    <p>Max. Meter Raises: {{bg_data.max_meter_raises}}</p>
+    <p>Scheduled meter raises: </p>
+    {% if bg_data.scheduled_meter_raises %}
+        <ul>
+            {% for meter_raise in bg_data.scheduled_meter_raises %}
+                <li>Date: {{meter_raise.scheduled_date}}. Raise Limit: {{meter_raise.raise_limit}}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>None</p>
+    {% endif %}
+
+    {% for room_id, room_data in bg_data.rooms.items %}
+    <ul>
+        <li>
+            <a href="{{room_data.0}}" target="_blank">{{room_data.1}}</a>
+            <p>Last Pricing Change: {{room_data.2}}</p>
+            {% if not room_data.2 == room_data.3 %}
+            <p>Last Pricing Period Start: {{room_data.3}}</p>
+            {% endif %}
+        </li>
+    </ul>
+
+    {% endfor %}
+
+{% endfor %}
+
+{%  else %}
+<p>no table data</p>
+
+{% endif %}
+
+
+</body>
+</html>

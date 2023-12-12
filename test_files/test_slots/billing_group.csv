@@ -1,0 +1,3 @@
+id,display_name,revenue_split_level,schedule_type
+1,Test Billing Group 1- Aces and Nostrand,BUILDING,GROSS_REVENUE
+2,Test Billing Group 2,BILLING_GROUP_DUMMY,GROSS_REVENUE

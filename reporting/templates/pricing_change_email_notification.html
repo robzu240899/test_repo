@@ -1,0 +1,36 @@
+
+
+<html>
+    <body>
+        
+        <!-- Pricing changes info:
+        {% for change in formatted_changes %}
+
+            <p>Laundry Room: {{change.laundry_room}}</p>
+            <p>Equipment Type: {{change.equipment_type}} </p>
+            <p>Detection Date: {{change.detection_date}}</p>
+            <p>Cycle Type: {{change.cycle_type}}</p>
+            <p>Price: {{change.new_price}}</p>
+            <p>Previous Price: {{change.old_price}}</p>
+
+        {% endfor %} -->
+
+        <p>Detection Date: {% now "Y-m-d" %}</p>
+
+        {% for room, equipment_data in formatted_changes.items %}
+        <h3><strong>Laundry Room: {{room}}</strong></h3>
+            {% for equipment_name, changes in equipment_data.items %}
+                <p><strong>Equipment Type: {{equipment_name}}</strong></p>
+                {% for change in changes %}
+                <p>Cycle Type: {{change.0}}</p>
+                <p>Old Price: ${{change.1}}</p>
+                <p>New Price: ${{change.2}}</p>
+                <!-- <p>Detection Date: {{change.3}}</p> -->
+                <p>-------------------------</p>
+                {% endfor %}
+            {% endfor %}
+
+        {% endfor %}
+
+    </body>
+</html>

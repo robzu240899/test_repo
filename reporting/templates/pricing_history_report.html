@@ -1,0 +1,197 @@
+{% load static %}
+<html>
+<head>
+  <style media="screen">
+    select {
+      height: 300px;
+    }
+  </style>
+
+       <title>Pr</title>
+      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+       <style>
+           /* tell the SVG path to be a thin blue line without any area fill */
+           path {
+               stroke: steelblue;
+               stroke-width: 1;
+               fill: none;
+           }
+       </style>
+</head>
+<body>
+Pricing Report
+<br>
+{{ msg }}
+<br>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+
+{%if queryset %}
+
+  {% for laundry_room, pricing_periods in queryset.items %}
+  <div class="LaundryRoomContainer">
+
+  </div>
+    <h2 style="text-align: center;">Laundry Room: {{laundry_room}}.</h2>
+
+    {% for pricing_period in pricing_periods %}
+        <div class="PricingPeriod">
+
+        </div>
+            {% for pricing_period_object, data in pricing_period.items %}
+            <h3>
+              Pricing Period: {{pricing_period_object.start_date}}-
+              {% if pricing_period_object.end_date %}
+                {{pricing_period_object.end_date}}
+              {% else %}
+                Today
+              {% endif %}
+
+              <div class="metrics">
+                <input type="hidden" id="pricing_period" name="pricing_period" value="{{pricing_period_object.pk}}">
+                <input type="hidden" id="laundry_room" name="laundry_room" value="{{laundry_room.pk}}">
+                <button id="{{pricing_period_object.pk}}" type="button" name="button">Show Metrics</button>
+                <div id="loading-image-{{pricing_period_object.pk}}" style="display: none;">
+                  <img src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif" alt="">
+                </div>
+              </div>
+            </h3>
+                {% for key, full_data in data.items %}
+
+
+                  <div id="metrics-{{pricing_period_object.pk}}">
+
+                  </div>
+
+                    <div id="graphs-container-{{pricing_period_object.pk}}">
+
+                    </div>
+                  {% if key == 'Equipments' %}
+                    <h4>Equipments</h4>
+                    {% for equipment_object, cycles in full_data.items %}
+                      <p style="font-weight: bold;">{{equipment_object}}</p>
+                      <p>Cycles: </p>
+                      <ul>
+                        {% for cycle in cycles %}
+                        {% if cycle %}
+                          <li>{{cycle.cycle_type}} | {{cycle.get_price}}</li>
+                        {% else %}
+                          <li>same as previous</li>
+                        {% endif %}
+                        {% endfor %}
+                      </ul>
+                     {% endfor %}
+
+                     <p>Revenue Earned: $x,xxx</p>
+                  {% endif %}
+
+                  {% if key == 'Metrics' %}
+                  <h4>Metrics</h4>
+                    <p>raw data: {{full_data}}</p>
+                    {% for metric, values in full_data.items %}
+                    <p>perritiko</p>
+                      <p>{{metric}}: {{values}}</p>
+                    {% endfor %}
+                  {% endif %}
+
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+  </div>
+  {% endfor %}
+{% endif %}
+<br>
+<div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script type="text/javascript">
+$("button").click(function(e) {
+  e.preventDefault();
+  var metrics = $(this).parents(".metrics");
+  var pricing_period = metrics.find("#pricing_period").val();
+  var laundry_room = metrics.find("#laundry_room").val();
+  $.ajax({
+      type: "GET",
+      url: "/reporting/custom-pricing-history/plotting/",
+      cache: false,
+      data: {
+          pricing_period: metrics.find("#pricing_period").val(), // < note use of 'this' here
+          laundry_room: metrics.find("#laundry_room").val()
+      },
+      beforeSend: function(){
+        $('#loading-image-'+pricing_period).show();
+      },
+      complete: function(){
+        $('#loading-image-'+pricing_period).hide();
+      },
+      success: function(result) {
+          console.log(result);
+          var revenue_mean = result['Revenue Mean'];
+          var revenue_total = result['Total Revenue'];
+          var total_months = result['Total Months'];
+          var rolling_mean = result['Rolling Mean'];
+          console.log("Rolling Mean: " + rolling_mean);
+          var total_machines = result['Total Machines'];
+          var graphsContainer = document.querySelector("#graphs-container-"+pricing_period);
+          var metricsContainer = document.querySelector("#metrics-"+pricing_period);
+
+          let trace1 = {
+              x: [],
+              y: [],
+              mode: "lines"
+          };
+
+          $.each(JSON.parse(rolling_mean), function() {
+            $.each(this, function(k, v) {
+              trace1.x.push(k);
+              console.log("K: " + k);
+              console.log(typeof k);
+              trace1.y.push(v);
+              console.log("V: " + v);
+              console.log(typeof v);
+            });
+          });
+          console.log("Trace data: " + trace1);
+
+          var layout = {
+            autosize: false,
+            width: 1000,
+            height: 500,
+            scale: 5,
+            margin: {
+              l: 50,
+              r: 50,
+              b: 100,
+              t: 100,
+              pad: 4
+            },
+          };
+          var graphElement = document.createElement("div");
+          var elementId = laundry_room;
+          graphElement.id = elementId;
+          graphsContainer.appendChild(graphElement);
+          var data = [trace1];
+          var revenueElement = $("<h3></h3>").text("Revenue Monthly Mean: $" + revenue_mean);
+          var totalrevenueElement = $("<h3></h3>").text("Total Revenue Over Period: $" + revenue_total);
+          var totalDaysElement = $("<h3></h3>").text("Total Months: " + total_months);
+          var totalMachinesElement = $("<h3></h3>").text("Total Machines: " + total_machines);
+          $(metricsContainer).append(revenueElement);
+          $(metricsContainer).append(totalrevenueElement);
+          $(metricsContainer).append(totalDaysElement);
+          $(metricsContainer).append(totalMachinesElement);
+          console.log("Type of elementId: " + typeof elementId);
+          Plotly.newPlot(elementId, data, layout, {showSendToCloud: true});
+          // });
+      },
+      error: function(result) {
+          console.log('error');
+      }
+  });
+});
+</script>
+</body>
+</html>

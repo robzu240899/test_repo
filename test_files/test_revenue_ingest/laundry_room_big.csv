@@ -1,0 +1,138 @@
+id,display_name,fascard_code,is_active,time_zone,laundry_group_id
+1,"1 Arden ST",21,1,US/Eastern,1
+2,"101 Audubon AVE",39,1,US/Eastern,1
+3,"108 Charles ST",56,1,US/Eastern,1
+4,"121 W 104th ST",52,1,US/Eastern,1
+5,"1265 Olmstead AVE",22,1,US/Eastern,1
+6,"135 E 17th St",29,1,US/Eastern,1
+7,"139 Joralemon ST",34,1,US/Eastern,1
+8,"146 E 35th ST",59,1,US/Eastern,1
+9,"146 W 10th ST",54,1,US/Eastern,1
+10,"150 W 21st St",13,1,US/Eastern,1
+11,"163 E 36th St",43,1,US/Eastern,1
+12,"175 Lexington AVE",53,1,US/Eastern,1
+13,"2 Berkeley Ave",19,1,US/Eastern,1
+14,"20 Magaw PL",44,1,US/Eastern,1
+15,"201 E 10th ST",61,1,US/Eastern,1
+16,"205 W 13th St",14,1,US/Eastern,1
+17,"22 E 105th ST -- street",38,1,US/Eastern,1
+18,"22 E 105th ST -- basement",37,1,US/Eastern,1
+19,"223 W 16th ST",45,1,US/Eastern,1
+20,"250 W 78th ST",60,1,US/Eastern,1
+21,"250 W 99th ST",66,1,US/Eastern,1
+22,"2504 Olinville AVE",26,1,US/Eastern,1
+23,"251 W 81st St",16,1,US/Eastern,1
+24,"260 Convent Ave",41,1,US/Eastern,1
+25,"265 W 81st ST",17,1,US/Eastern,1
+26,"270 FT WASHINGTON",46,1,US/Eastern,1
+27,"274 W 19TH ST",48,1,US/Eastern,1
+28,"280 FT WASHINGTON AVE",47,1,US/Eastern,1
+29,"289 Convent AVE",15,1,US/Eastern,1
+30,"305 Convent Ave",40,1,US/Eastern,1
+31,"3085 Brighton 13th ST",20,1,US/Eastern,1
+32,"406 W 44th ST",58,1,US/Eastern,1
+33,"41 St. Nick Terrace",28,1,US/Eastern,1
+34,"413 W 56th ST",51,1,US/Eastern,1
+35,"414 E 74th St",42,1,US/Eastern,1
+36,"42 Hicks ST",35,1,US/Eastern,1
+37,"42 W 65th ST",50,1,US/Eastern,1
+38,"452 W 149th ST",33,1,US/Eastern,1
+39,"460 W 149th ST",32,1,US/Eastern,1
+40,"48 Stuyvesant ST",55,1,US/Eastern,1
+41,"527 E 83rd ST",63,1,US/Eastern,1
+42,"533 3rd AVE",57,1,US/Eastern,1
+43,"555 W 160th ST",24,1,US/Eastern,1
+44,"568 Pacific St",30,1,US/Eastern,1
+46,"585 W 204th ST",65,1,US/Eastern,1
+47,"625 W 152nd ST",27,1,US/Eastern,1
+48,"631 Edgecombe AVE",23,1,US/Eastern,1
+49,"651 W 171st ST",36,1,US/Eastern,1
+50,"666 St Nick",31,1,US/Eastern,1
+51,"679 Waring AVE",25,1,US/Eastern,1
+52,"709 W 176th ST",62,1,US/Eastern,1
+53,"911 McLean",64,1,US/Eastern,1
+54,"37-06 Warren ST",49,1,US/Eastern,1
+55,"27 1/2 Morton ST",18,1,US/Eastern,1
+56,"228 E 26th ST",340,1,US/Eastern,1
+57,"226 E 26th ST",341,1,US/Eastern,1
+58,"145 E 17th ST",365,1,US/Eastern,1
+59,"26 7th AVE S",366,1,US/Eastern,1
+60,"160 E 28th ST",367,1,US/Eastern,1
+61,"256 E 10th ST",372,1,US/Eastern,1
+62,"Nostrand Gardens -- 2425 Haring ST",368,1,US/Eastern,2
+63,"Nostrand Gardens -- 2450 Haring ST",374,1,US/Eastern,2
+64,"JTS -- 3080 Broadway ",387,1,US/Eastern,1
+65,"JTS -- 537 W 121st ST",386,1,US/Eastern,1
+66,"Nostrand Gardens -- 2430 Haring ST",382,1,US/Eastern,2
+67,"Nostrand Gardens -- 2455 Haring ST",381,1,US/Eastern,2
+68,"Nostrand Gardens -- 2435 Haring ST",394,1,US/Eastern,2
+69,"Nostrand Gardens -- 2465 Haring ST",392,1,US/Eastern,2
+70,"417 W 43rd ST",413,1,US/Eastern,1
+71,"447 & 449 E 78th ST",422,1,US/Eastern,1
+72,"449 E 78th ST",416,0,US/Eastern,1
+73,"418 E 78th ST",425,1,US/Eastern,1
+74,"Doug Garr | 490 West End AVE",435,0,US/Eastern,1
+75,"PARTRIDGE | 321 61st ST",450,1,US/Eastern,1
+76,"Blue Woods | 304 W 88th ST",451,1,US/Eastern,1
+77,"PARTRIDGE | 21-06 33rd ST",485,1,US/Eastern,1
+78,"PARTRIDGE | 27-10 Newtown AVE",484,1,US/Eastern,1
+79,"PARTRIDGE | 31-15 21st AVE",486,1,US/Eastern,1
+80,"GRONER | 761-767 Prospect PL",471,1,US/Eastern,1
+81,"159 W 95th ST",515,1,US/Eastern,1
+82,"Village Views | 239 E 10th ST",512,1,US/Eastern,1
+83,"515 E 81st ST",436,1,US/Eastern,1
+84,"137 E 29th ST",520,1,US/Eastern,1
+85,"RUDD REALTY | 75 Central Park West",524,1,US/Eastern,1
+86,"Barhite & Holzinger | 4 Alden PL",532,1,US/Eastern,1
+87,"Barhite & Holzinger | 1 Alden PL",531,1,US/Eastern,1
+88,"217 E 82nd ST",522,1,US/Eastern,1
+89,"FINCH | 52 E 78th ST",553,1,US/Eastern,1
+90,"FINCH | 61 E 77th ST	",556,1,US/Eastern,1
+91,"Atlantic AVE Residence | 34 Sherlock PL",559,1,US/Eastern,1
+92,"Atlantic AVE Residence | 26 Sherlock PL",558,1,US/Eastern,1
+93,"Atlantic AVE Residence | 1870 Eastern Pkwy",560,1,US/Eastern,1
+94,"FORDHAM | 111 W 106th St",562,1,US/Eastern,1
+95,"Raj | 102 Albemarle RD",596,1,US/Eastern,1
+96,"Empire Management | 115 E 72nd ST",590,1,US/Eastern,1
+97,"Ronny Ovid | 150 W 92nd ST",580,1,US/Eastern,1
+98,"RA Cohen | 157 Suffolk ST",591,1,US/Eastern,1
+99,"Settlement Housing Fund | 301 W 46th ST",573,1,US/Eastern,1
+100,"555 W 156th ST",571,1,US/Eastern,1
+101,"Los Sures | 201 Roebling ST",634,1,US/Eastern,1
+102,"Paley & Taube | 518 East 84th ST",638,1,US/Eastern,1
+103,"KANO REI | 357 West 37th Street",639,1,US/Eastern,1
+104,"Paley & Taube | 100 Sullivan ST",654,1,US/Eastern,1
+105,"Paley & Taube | 110 Sullivan ST",655,1,US/Eastern,1
+106,"Sam Berlind | 1710 AVE H",648,1,US/Eastern,1
+107,"Paley & Taube | 244 East 60th ST",666,1,US/Eastern,1
+108,"Paley & Taube | 200 West 18th ST",663,1,US/Eastern,1
+109,"Paley & Taube | 324 East 84th ST",668,1,US/Eastern,1
+110,"Paley & Taube | 326 East 84th ST",669,1,US/Eastern,1
+111,"Paley & Taube | 321 East 79th ST",672,1,US/Eastern,1
+112,"Paley & Taube | 208 East 88th ST",674,1,US/Eastern,1
+113,"Paley & Taube | 320 East 85th ST",671,1,US/Eastern,1
+114,"Glen Oaks | 247-74 77th Crescent",680,1,US/Eastern,1
+115,"COVINGTON | 375 Manhattan AVE",704,1,US/Eastern,1
+116,"Paley & Taube | 512 East 88th ST",673,1,US/Eastern,1
+117,"Glen Oaks | 260-44 Langston AVE",681,1,US/Eastern,1
+118,"Glen Oaks | 73-68 260th ST",682,1,US/Eastern,1
+119,"Glen Oaks | 74-12 255th ST",683,1,US/Eastern,1
+120,"COLONY MANOR | 130 72ND ST",696,1,US/Eastern,1
+121,"COLONY MANOR | 152 72ND ST",710,1,US/Eastern,1
+122,"Paley & Taube | 422 East 81st ST",675,1,US/Eastern,1
+123,"686 West 204th ST",729,0,US/Eastern,1
+124,"338 East 22nd ST",717,0,US/Eastern,1
+125,"340 East 22nd ST",718,0,US/Eastern,1
+126,"310 East 74th ST",703,0,US/Eastern,1
+127,"250 Fort Washington AVE",721,0,US/Eastern,1
+128,"255 Fort Washington AVE",722,0,US/Eastern,1
+129,"506 East 88th ST",724,0,US/Eastern,1
+130,"55 Cooper ST",725,0,US/Eastern,1
+131,"614 West 152nd ST",726,0,US/Eastern,1
+132,"634 St. Nicholas AVE",716,1,US/Eastern,1
+133,"710 West 173rd ST",730,0,US/Eastern,1
+134,"63 Hamilton TERR",732,0,US/Eastern,1
+135,"53 Hamilton TERR",731,0,US/Eastern,1
+136,"111 East 7th ST",727,0,US/Eastern,1
+137,"101 Clinton ST",728,0,US/Eastern,1
+138,"49 Park AVE",723,0,US/Eastern,1

@@ -1,0 +1,19 @@
+{% load html_reader %}
+<html>
+    <body>
+        <h4>Anomalies: </h4>
+        {% for anomaly in anomalies %}
+            <p></p>
+            <p>Result: {{anomaly.msg}} </p>
+            <p style="text-indent: 20px;">Days window: {{anomaly.days_window}} </p>
+            <p style="text-indent: 60px;">Date range for the anomaly: {{anomaly.date_range}} </p>
+            <!-- If there's a report file, display it -->
+            {% if anomaly.report_file_graphs %}
+                <h4>Report Graphs:</h4>
+                <div id="graphs">
+                    {% render_graph anomaly %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </body>
+</html>

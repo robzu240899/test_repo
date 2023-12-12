@@ -1,0 +1,8 @@
+id,billing_group_id,revenue_split_formula,base_rent,landloard_split_percent,beakpoint,start_gross_revenue,end_gross_revenue,start_date,end_date
+1,1,PERCENT,,0.1,,,,,
+2,2,PERCENT,,0.15,,,,1900-01-01,2017-01-01
+3,2,PERCENT,,0.2,,,,2017-01-01,2017-02-01
+4,2,PERCENT,,0.25,,,,2017-02-01,
+5,3,PERCENT,,0.5,,0,11000,,
+6,3,PERCENT,,0.6,,11000,12000,,
+7,3,PERCENT,,0.7,,12000,,,

@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <style>
+        select {
+            height: 500px;
+        }
+    </style>
+</head>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+
+    {% if data %}
+        {% for room, machines in data.items %}
+            <h3>Room: {{room.display_name}}</h3>
+            {% if machines %}
+                <ul>
+                    {% for machine in machines %}
+                        <a href="/roommanager/repair-replace/{{machine.asset_code}}" target="_blank">Machine: {{machine.asset_code}} Report</a> <br>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No valid machine</p>
+            {% endif %}
+        {% endfor %}
+    {% endif%}
+</html>

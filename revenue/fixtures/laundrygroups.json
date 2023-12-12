@@ -1,0 +1,1 @@
+[{"model": "roommanager.laundrygroup", "pk": 1, "fields": {"display_name": "Aces", "is_active": true, "notes": "Aces"}}, {"model": "roommanager.laundrygroup", "pk": 2, "fields": {"display_name": "Nostrand Gardens", "is_active": false, "notes": "Nostrand Gardens"}}]

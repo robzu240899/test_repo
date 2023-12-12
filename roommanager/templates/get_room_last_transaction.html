@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <style>
+        .big-select {
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>        
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+    {% if msg %}
+    <p><b>{{msg}}</b></p>
+    {% endif %}
+
+{% if tx_queryset %}
+    <table style="width:100%">
+    <tr>
+        <th style="text-align:left">Fascard Record ID</th>
+        <th style="text-align:left">Assigned Time</th>
+        <th style="text-align:left">Transaction Type</th>
+        <th style="text-align:left">Credit Card Amount</th>
+        <th style="text-align:left">Cash Amount</th>
+        <th style="text-align:left">Balance Amount</th>
+        <th style="text-align:left">Bonus Amount</th>
+        <th style="text-align:left">CC Last four</th>
+        <th style="text-align:left">First Name</th>
+        <th style="text-align:left">Last Name</th>
+    </tr>
+    {% for tx in tx_queryset %}
+    <tr>
+        <td>{{tx.fascard_record_id}}</td>
+        <td>{{tx.assigned_local_transaction_time}}</td>
+        <td>{% if tx.transaction_type == '2' %} Value Add {% elif tx.transaction_type == '100'  %} Direct Vend {% endif %}</td>
+        <td>{{tx.credit_card_amount}}</td>
+        <td>{{tx.cash_amount}}</td>
+        <td>{{tx.balance_amount}}</td>
+        <td>{{tx.bonus_amount}}</td>
+        <td>{{tx.last_four}}</td>
+        <td>{{tx.first_name}}</td>
+        <td>{{tx.last_name}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+{% endif %}
+</body>
+</html>

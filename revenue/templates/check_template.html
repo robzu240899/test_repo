@@ -1,0 +1,95 @@
+<html>
+    <style>
+        p{
+            font-size: 16px;
+        }
+        .container {
+            width: 50%;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .underline {
+            flex-grow: 1;
+            border-bottom: 1px solid black;
+            margin-left: 5px;
+        }
+        .fake-underline {
+            flex-grow: 0.5;
+            border-bottom: 1px solid white;
+            margin-left: 5px;
+        }
+    </style>
+    <body>
+        <div class='container'>
+            <h2 style="text-align: center;">CHECK REQUEST</h2>
+            <div class='row'>
+                <div class='label'>COMPANY: <u>{{company}}</u></div>
+                <div class='fake-underline'></div>
+                <div class='label'>DATE: <u>{{date}}</u></div>
+                <div class='fake-underline'></div>
+                <div class='label'>INVOICE ID#: <u>{{refund_id}}</u></div>
+            </div>
+        </div>
+
+        <div class='container'>
+            <div class='row'>
+                <div class='label'>PAYEE: <u>{{payee}}</u></div>
+            </div>
+            <div class='row'>
+                <div class='label'>ADDRESS: <u>{{payee_address}}</u> </div>
+            </div>
+            <div class='row'>
+                <div class='label'>AMOUNT: <u>${{amount}}</u></div>
+            </div>
+            <div class='row'>
+                <div class='label'>PURPOSE: <u>{{purpose}}</u></div>
+                <div class='underline'></div>
+            </div>
+        </div>
+        <div class="container" style="">
+            <div class='row'>
+                <div class='label'>GENERAL LEDGER ACCT. #</div>
+                <div class='underline'></div>
+            </div>
+            <div class="row">
+                <div class='underline'></div>
+            </div>
+            <div class="row">
+                <div class='underline'></div>
+            </div>
+            <div class="row">
+                <div class='underline'></div>
+            </div>
+            <div class="row">
+                <div class='underline'></div>
+            </div>
+            
+            <br>
+            <br>
+            <div class="container">
+                <div class='row'>
+                    <div class='label'>RETURN SIGNED CHECK TO</div>
+                    <div class='underline'></div>
+                </div>
+                <div class='row'>
+                    <div class='label'>REQUESTED BY: <u>{{requested_by}}</u></div>
+                </div>
+                <div class='row'>
+                    <div class='label'>CHECK # & DATE PAID</div>
+                    <div class='underline'></div>
+                </div>
+                <div class='row'>
+                    <div class='label'>ISSUED BY: <u>{{requested_by}}</u></div>
+                </div>
+                <div class='row'>
+                    <div class='label'>MATCHED BY: </div>
+                    <div class='underline'></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

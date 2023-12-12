@@ -1,0 +1,97 @@
+{% load reportstags %}
+
+<html>
+<head>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<!-- XDSoft DateTimePicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css"/>
+<style>
+    td{
+        word-wrap: break-word;
+    }
+</style>
+</head>
+
+
+    <body>
+        <br><br>
+        {% if current_configs %}
+
+        {% for model_name, configs in current_configs.items %}
+            <p>
+                <h3>{{model_name}}</h3>
+                {% get_url_reverse_name model_name as url_reverse_reference %}
+                <a href="{% url url_reverse_reference %}" target="_blank" style="font-size: 18px">Create a New One</a>
+            </p>
+            <p>
+
+                {% if configs %}
+                <table class="tx-table" class="display" style="width:100%; table-layout: fixed;" width=100%>
+                    <thead>
+                        <tr>
+                            <th style="display: hidden;">Admin Dashboard Link</th>
+                            <th style="display: hidden;">Relative Date Lookback:</th>
+                            <th style="text-align:left">Cron Expression</th>
+                            <th style="text-align:left">Human-Readable Cron</th>
+                            <th style="text-align:left">Deliver to</th>
+                            {% get_fields configs.0 as config_fields %}
+                            {% if config_fields %}
+                                {% for config_field in config_fields %}
+                                    <th style="text-align:left">{{config_field}}</th>
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for config in configs %}
+                          <tr>
+                            <td> <a href="{% get_admin_url config %}" target="_blank">Admin Link</a> </td>
+                            <td>{{config.time_units_lookback}} {{config.time_units}}</td>
+                            <td>{{config.cron_expression}} (UTC)</td>
+                            {% get_human_readable_cron config.cron_expression as human_readable_cron %}
+                            {% if human_readable_cron %}
+                                <td>{{human_readable_cron}}</td>
+                            {% else %}
+                                <td>Couldn't parse cron expression into human-readble</td>
+                            {% endif %}
+                            <td>{{config.email}}</td>
+                            {% parameters_as_dict config as parameters %}
+                            {% if parameters %}
+                                {% for field, val in parameters.items %}
+                                    <td>{{val}}</td>
+                                {% endfor %}
+                            {% endif %}
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                </table>
+                {% endif %}
+            </p>
+            <br>
+            <br>
+            <br>
+        {% endfor %}
+
+        {% endif %}
+    </body>
+</html>
+
+<script>
+    $(document).ready(function() {
+      var events = $('#events');
+      var table = $('.tx-table').DataTable( {
+          select: {
+              style:    'os',
+              selector: 'td:first-child'
+          },
+          order: [[ 1, 'asc' ]]
+      } );
+  } );
+  </script>

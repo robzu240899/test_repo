@@ -1,0 +1,20 @@
+
+
+<html>
+    <body>
+        <h4>Anomalies: </h4>
+        {% for slot, slot_data in anomalies.items %}
+            <p></p>
+            <p>Slot Internal ID: {{slot}}</p>
+            <p>Slot Name: {{slot_data.slot_name}}</p>
+            <p>Location: {{slot_data.location}}</p>
+            <p>Machine: {{slot_data.machine}}</p>
+            <p>Anomalies: </p>
+            <ul>
+                {% for k,v in slot_data.anomalies.items %}
+                    <li>{{k}} : {{v}}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </body>
+</html>

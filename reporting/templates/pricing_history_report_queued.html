@@ -1,0 +1,435 @@
+{% load static %}
+{% load humanize %}
+<html>
+<head>
+  <style media="screen">
+    select {
+      height: 300px;
+    }
+  </style>
+
+       <title>Pricing Report</title>
+      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+       <style>
+           /* tell the SVG path to be a thin blue line without any area fill */
+           path {
+               stroke: steelblue;
+               stroke-width: 1;
+               fill: none;
+           }
+           .pricing-period-container{
+             display: inline-block;
+             width: 400px;
+             border: 1px solid;
+             border-top: 5px solid;
+             border-bottom: 5px solid;
+             vertical-align: top;
+           }
+           .graph-container{
+             display: inline-block;
+             margin-left: 20px;
+           }
+
+           .yellow-cycle{
+              list-style-position: inside;
+              border: 1px solid black;
+              background-color: yellow;
+           }
+       </style>
+       <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+</head>
+<body>
+Pricing Report
+<br>
+{{ msg }}
+<br>
+{% if called_from_queue %}
+{% else %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+{% endif %}
+
+{% if use_colors %}
+  <div style="display: none;" class="use-colors-info">true</div>
+{% else %}
+  <div style="display: none;" class="use-colors-info">false</div>
+{% endif %}
+
+
+{% if queryset %}
+
+  {% for laundry_room, pricing_periods in queryset.items %}
+  <div class="laundry-room-container" id="{{laundry_room.pk}}">
+
+    <h2 style="text-align: center;" class="title">Laundry Room: {{laundry_room}}.</h2>
+
+    <p>Laundry Room Unit Count: {{laundry_room.get_units}}</p>
+
+    <p>Billing Group: {{laundry_room.get_billing_group.display_name}}</p>
+    <p>Max. Meter Raises: {{laundry_room.get_billing_group.max_meter_raises}}</p>
+    <p>Scheduled Meter Raises: </p>
+    <ul>
+      {% for meter_raise in laundry_room.get_billing_group.meterraise_set.all %}
+        <li>{{meter_raise.scheduled_date}}  --  {{meter_raise.raise_limit}}</li>
+      {% endfor %}
+    </ul>
+
+    {% if room_pricing_changes_history %}
+      <h4>Pricing Changes History</h4>
+      {% for date, changes in room_pricing_changes_history.items %}
+        <p>Date: {{date}}</p>
+        <ul>
+          {% for change in changes %}
+            <li>{{change}}</li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    {% endif %}
+
+    {% for pricing_period in pricing_periods %}
+    {% for pricing_period_object, data in pricing_period.items %}
+    <div class="pricing-period-container" id="{{laundry_room.pk}}{{pricing_period_object.pk}}">
+            <h3>
+              Pricing Period: {{pricing_period_object.start_date}}-
+              {% if pricing_period_object.end_date %}
+                {{pricing_period_object.end_date}}
+              {% else %}
+                Today
+              {% endif %}
+
+              <div class="metrics">
+                <input type="hidden" id="pricing_period" name="pricing_period" value="{{pricing_period_object.pk}}">
+                <input type="hidden" id="laundry_room" name="laundry_room" value="{{laundry_room.pk}}">
+              </div>
+            </h3>
+                {% for key, full_data in data.items %}
+
+
+                  {% if key == 'Equipments' %}
+                    <h4 style="text-aling: center;">Equipments</h4>
+                    {% for equipment_object, equipment_data in full_data.items %}
+                    <div class="equipment-container" id="{{laundry_room.pk}}{{equipment_object.pk}}">
+                      <p style="font-weight: bold;" class="equipment-title">{{equipment_object}}</p>
+                        {% for k,v in equipment_data.items %}
+                          {% if k == 'Cycles'  %}
+                          <p>Cycles: </p>
+                          <ul>
+                            {% for cycle in v %}
+                              {% if cycle %}
+                                <li class="{% if not cycle.is_placeholder %} yellow-cycle {% endif %} ">
+                                  {{cycle.cycle_type}} | ${{cycle.get_price}}
+                                </li>
+                              {% else %}
+                                <li>None</li>
+                              {% endif %}
+                            {% endfor %}
+                          </ul>
+                          {% endif %}
+
+                          {% if k == 'RevenuePerEquipment' %}
+                            <p><strong>Revenue per equipment per month (mean): </strong> ${{v|floatformat:2|intcomma}}</p>
+                          {% elif k == 'Revenue' %}
+                            <p><strong>Revenue per machine per month (mean): </strong> ${{v|floatformat:2|intcomma}}</p>
+                          {% elif k == 'RevenuePerMachinePerUnit' %}
+                            <p><strong>Revenue per machine per mont per unit (mean) </strong> ${{v|floatformat:2|intcomma}} </p>
+                          {% elif k == 'MachineCount' %}
+                            <p><strong>Machine count: </strong>{{v}}</p>
+                            <hr>
+                          {% endif %}
+
+
+                          {% if k == 'Revenue Array' %}
+                            <div class="revenue-container" data-revenue="{{v}}"></div>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                     {% endfor %}
+                  {% endif %}
+
+                  {% if key == 'Metrics' %}
+                    <div class="pricing-container" id="pricing-metrics-{{laundry_room.pk}}">
+                      {% for metric, values in full_data.items %}
+                        {% if metric == 'Revenue Timeseries' %}
+                          <div class="revenue-timeseries-container", data-rolling="{{values}}"></div>
+                        {% else %}
+                          <p><strong>{{metric}}:</strong>
+                            {% if metric == 'Revenue Mean' or metric == 'Revenue Per Unit' or metric == 'Total Revenue' %}
+                              $  {{values|floatformat:2|intcomma}}
+                            {% else %}
+                              {{values}}
+                            {% endif %}
+                          </p>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                      <script type="text/javascript">
+                        //'{{metric}}': JSON.parse("{{values|escapejs}}"),
+                                // $(document).ready(function() {
+                                //     var data =
+                                //             {
+                                //               {% for metric, values in full_data.items %}
+                                //                 '{{metric}}': JSON.parse("{{values|escapejs}}"),
+                                //               {% endfor %}
+                                //             }
+                                //     process_metrics(data, {{pricing_period_object.pk}}, {{laundry_room.pk}});
+                                // });
+                    </script>
+                  {% endif %}
+
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <div id="graphs-container-{{laundry_room.pk}}" class="graph-container">
+
+    </div>
+
+  </div>
+  {% endfor %}
+{% endif %}
+<br>
+<div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+<script type="text/javascript">
+
+$(document).ready(function() {
+    var laundry_rooms = $(document).find('.laundry-room-container');
+    var use_colors = $(document).find('.use-colors-info');
+    use_colors = use_colors[0].innerText;
+    $.each(laundry_rooms, function(){
+      equipments = $(this).find('.equipment-container');
+      pricingPeriods = $(this).find('.pricing-container');
+      laundryRoomId = this.id;
+      laundryRoomName = $(this).find(".title")[0].textContent
+      equipmentsArray = $(equipments).toArray();
+      equipmentsGrouped = equipmentsArray.reduce((acc, el) => {return acc[el.id] ? {...acc, [el.id]: [...acc[el.id], el]} : {...acc, [el.id]: [el]}}, {});
+
+      pricingPeriodsArray = $(pricingPeriods).toArray();
+      pricingPeriodsGrouped = pricingPeriodsArray.reduce((acc, el) => {return acc[el.id] ? {...acc, [el.id]: [...acc[el.id], el]} : {...acc, [el.id]: [el]}}, {});
+
+      var laundryroomGraph = [];
+
+      var layout = {
+          title: {
+                text:laundryRoomName + " Revenue by Equipment Type",
+                font: {
+                  family: 'Courier New, monospace',
+                  size: 18
+                },
+                xref: 'paper',
+                x: 0.05,
+          },
+          yaxis: {domain: [0, 0.50]},
+          yaxis2: {domain: [0.50, 1]},
+          autosize: false,
+          width: 1300,
+          height: 700,
+          showlegend: true,
+          legend: {
+            x: 1,
+            y: 1,
+            traceorder: 'reversed'
+          },
+          scale: 5,
+          margin: {
+            l: 50,
+            r: 50,
+            b: 100,
+            t: 100,
+            pad: 4
+          },
+          shapes: [],
+      };
+
+
+      var highestEquipmentRevenueValue= 0;
+
+      if (use_colors === 'true'){
+        var colors = ['rgb(219, 64, 82)', 'rgb(55, 128, 191)', 'rgb(128, 0, 128)', 
+        'rgb(164, 194, 244)', 'rgb(234, 153, 153)', 'rgb(142, 124, 195)', 'rgb(192,192,192)',
+        'rgb(22, 31, 201)'];
+      }
+      else{
+        var colors = ['rgb(211,211,211)', 'rgb(192,192,192)',
+        'rgb(176,176,176)', 'rgb(160,160,160)','rgb(128,128,128)', 'rgb(104,104,104)',
+        'rgb(72,72,72)', 'rgb(48,48,48)', 'rgb(0,0,0)'];
+      }
+
+
+      var shapes = ['solid', 'dashdot', 'dot'];
+
+      i = -1;
+      Object.keys(equipmentsGrouped).forEach(function(key) {
+        i++;
+        if (i == 4){
+          i == 0;
+        }
+        equipmentsWithId = equipmentsGrouped[key]
+        let trace1 = {
+          x: [],
+          y: [],
+          mode: "lines",
+          line: {
+            color: colors[i],
+            width: 3,
+            dash: shapes[i]
+          }
+          
+        };
+        $.each(equipmentsWithId, function(){
+          equipmentTitle = $(this).find('.equipment-title')[0].textContent
+          if (!("name" in trace1)){
+            trace1["name"] = equipmentTitle;
+          }
+          revenueContainer = $(this).find('.revenue-container')[0]
+          revenue_data = $(revenueContainer).data('revenue')
+          $.each(revenue_data, function() {
+            data_length = Object.keys(this).length;
+            var counter = 0;
+          $.each(this, function(k, v) {
+              counter++;
+              trace1.x.push(String(k));
+              trace1.y.push(v);
+
+              if (v > highestEquipmentRevenueValue) {
+                highestEquipmentRevenueValue = v;
+              }
+              if (counter == data_length) {
+                console.log("This is the las iteration. Counter: " + counter + " Date: " + k);
+                if (layout["shapes"].length == 0) {
+                  line={
+                    type: 'line',
+                    xref: 'x',
+                    yref: 'paper',
+                    x0: k,
+                    y0: 0,
+                    x1: k,
+                    y1: 1,
+                    line: {
+                      color: 'black',
+                      width: 2
+                    }
+                  }
+                  layout["shapes"].push(line);
+
+                }
+              }
+            });
+          });
+
+        })
+        laundryroomGraph.push(trace1);
+      })
+
+      //Add highest revenue value line to layout
+
+      line={
+        type: 'line',
+        xref: 'paper',
+        yref: 'y',
+        x0: 0,
+        y0: highestEquipmentRevenueValue,
+        x1: 1,
+        y1: highestEquipmentRevenueValue,
+        line: {
+          color: 'rgb(156, 156, 149)',
+          width: 4,
+          dash: 'dot'
+        }
+      }
+      layout["shapes"].push(line);
+
+      Object.keys(pricingPeriodsGrouped).forEach(function(key) {
+        pricingPeriodsWithId = pricingPeriodsGrouped[key]
+        let trace2 = {
+          x: [],
+          y: [],
+          mode: "lines",
+          name: "Aggregated Normalized Revenue",
+          yaxis: 'y2',
+        };
+        $.each(pricingPeriodsWithId, function(){
+          revenueTimeseriesContainer = $(this).find('.revenue-timeseries-container')[0]
+          revenue_data = $(revenueTimeseriesContainer).data('rolling')
+          $.each(revenue_data, function() {
+            data_length = Object.keys(this).length;
+            var counter = 0;
+          $.each(this, function(k, v) {
+              counter++;
+              trace2.x.push(String(k));
+              trace2.y.push(v);
+              // if (counter == data_length) {
+              //   console.log("This is the las iteration. Counter: " + counter + " Date: " + k);
+              //   if (layout["shapes"].length == 0) {
+              //     line={
+              //       type: 'line',
+              //       xref: 'x',
+              //       yref: 'paper',
+              //       x0: k,
+              //       y0: 0,
+              //       x1: k,
+              //       y1: 1,
+              //       line: {
+              //         color: 'black',
+              //         width: 3
+              //       }
+              //     }
+              //     layout["shapes"].push(line);
+              //
+              //   }
+              // }
+            });
+          });
+
+        })
+        laundryroomGraph.push(trace2);
+      })
+
+
+
+      var laundryroomGraphContainer = document.querySelector("#graphs-container-"+laundryRoomId);
+      var graphElement = document.createElement("div");
+      var elementId = laundryRoomId;
+      graphElement.id = elementId;
+      laundryroomGraphContainer.appendChild(graphElement);
+
+      Plotly.newPlot(graphElement, laundryroomGraph, layout, {showSendToCloud: true});
+
+    })
+  });
+
+</script>
+<script type="text/javascript">
+  function process_metrics(data, pricing_period, laundry_room){
+    var pricing_period = pricing_period;
+    var laundry_room = laundry_room;
+    var revenue_mean = data['Revenue Mean'];
+    var revenue_total = data['Total Revenue'];
+    var total_days = data['Total Months'];
+    var revenue_timeseries = data['Revenue Timeseries'];
+    var total_machines = data['Total Machines'];
+    var metricsContainer = document.querySelector("#pricing-metrics-"+laundry_room.toString()+pricing_period.toString());
+
+    var revenue_timeseries_container = $(metricsContainer).find('#revenue-timeseries-data-container');
+    $(revenue_timeseries_container).attr('data-revenue', revenue_timeseries);
+
+    var revenueElement = $("<h4></h4>").text("Revenue Monthly Mean: $" + revenue_mean);
+    var totalrevenueElement = $("<h4></h4>").text("Total Revenue Over Period: $" + revenue_total);
+    var totalDaysElement = $("<h4></h4>").text("Total Months: " + total_days);
+    var totalMachinesElement = $("<h4></h4>").text("Total Machines: " + total_machines);
+    $(metricsContainer).append(revenueElement);
+    $(metricsContainer).append(totalrevenueElement);
+    $(metricsContainer).append(totalDaysElement);
+    $(metricsContainer).append(totalMachinesElement);
+  }
+</script>
+<script>
+  var title = $(document).find('.title');
+  title = title[0].innerText;
+  title = title.split(":")[1]
+  document.title = title;
+</script>
+</body>
+</html>

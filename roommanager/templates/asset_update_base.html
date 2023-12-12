@@ -1,0 +1,96 @@
+{% load hardwarepiecestags %}
+    <body>
+    <p>
+        <b>
+            {% block title %}Required Approval for an Asset Update{% endblock %}
+        </b>
+    </p>
+    <p style="text-indent: 50px;">
+        <b>
+            {% block main_message %}
+            {% endblock %}
+        </b>
+    </p>
+
+    {% block body %}
+
+    {% if extra.updated_attributes %}
+    <p>
+        <b>Updated Properties: </b>: {{extra.updated_attributes}}
+    </p>
+    {% endif %}
+
+    <p>
+        Current Card Reader: {{obj.scan_pairing.card_reader_code}}
+
+        {% get_asset_urls obj.scan_pairing.card_reader_code 'CARD_READER' as card_reader_urls %}
+        {% if card_reader_urls %}
+            {% for url in card_reader_urls %}
+                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+            {% endfor %}
+        {% else %}
+            (No Relevant links to card reader history)
+        {% endif %}
+
+    </p>
+    <p>
+        Current Machine: {{obj.scan_pairing.asset_code}}
+
+        {% get_asset_urls obj.scan_pairing.asset_code 'MACHINE' as machine_urls %}
+        {% if machine_urls %}
+            {% for url in machine_urls %}
+                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+            {% endfor %}
+        {% else %}
+            (No Relevant links to machine history)
+        {% endif %}
+        {% get_machine_pics obj.scan_pairing.asset_code as machine_pics %}
+        {% if machine_pics %}
+            {% for img_data in machine_pics %}
+                <a href="{{img_data.1}}">({{img_data.0}})</a>
+            {% endfor %}
+        {% endif %}
+
+    </p>
+
+    <p>
+        Current Slot: {{obj.scan_pairing.slot}}
+        {% get_asset_urls obj.scan_pairing.slot.id 'SLOT' as slot_urls %}
+        {% if slot_urls %}
+            {% for url in slot_urls %}
+                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+            {% endfor %}
+        {% else %}
+            (No Relevant links to slot history)
+        {% endif %}
+    </p>
+
+    {% if obj.scan_pairing.asset_picture %}
+        <p><b> Asset Picture Uploaded: </b> 
+
+            <span><button class ="toggler expander btn btn-link"> Show/Hide Picture</button></span>
+            <img style="margin-left: 4em; display: none;" src="{{obj.scan_pairing.asset_picture}}" alt="">
+
+        </p>
+    {% else %}
+        <p>No Asset Picture Uploaded</p>
+    {% endif %}
+
+    {% if obj.scan_pairing.asset_serial_picture %}
+        <p><b> Asset Serial Picture Uploaded (For {{obj.scan_pairing.asset_code}})</b>:
+
+            <span><button class ="toggler expander btn btn-link"> Show/Hide Picture</button> </span>
+            <img style="margin-left: 4em; display: none;" src="{{obj.scan_pairing.asset_serial_picture}}" alt="">
+        </p>
+
+    {% else %}
+        <p>No Asset Serial Picture uploaded</p>
+    {% endif %}
+
+    {% endblock %}
+
+    {% block action_button %}
+        <a id='action-button' href="https://system.aceslaundry.com/roommanager/asset-update-approval/{{obj.id}}/">Take Action</a>
+    {% endblock %}
+
+    </body>

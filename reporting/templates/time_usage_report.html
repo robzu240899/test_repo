@@ -1,0 +1,116 @@
+<html>
+<head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+</head>
+    <body>
+        {% if dataset %}
+            <p>Random Dates Used: </p>
+            <ul>
+                {% for d in dataset.random_dates %}
+                    <li> {{d}} </li>
+                {% endfor %}
+            </ul>
+            {% for room, room_data in dataset.rooms.items %}
+            <div class="room-container" id="{{room.pk}}">
+                <h2 class='room-name' style="text-align: center;">{{room}}</h2>
+                <p>Characteristics: </p>
+                <ul>
+                    {% for k, v in room_data.characteristics.items %}
+                        <li>{{k}}: {{v}}</li>
+                    {% endfor %}
+                </ul>
+                <p>Total Transactions Count: {{room_data.volume}}</p>
+                <div style="display: none" id=''></div>
+                <div style="display: none" id="room_data" name="room_data" value="{{room.pk}}">
+                    <div class="usage-container" data-usage="{{room_data.data_array}}"></div>
+                </div>
+                <div id="graphs-container-{{room.pk}}" class="graph-container">
+
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </body>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+    var rooms = $(document).find('.room-container');
+    $.each(rooms, function(){
+        roomName = $(this).find('.room-name')[0].textContent
+        RoomId = this.id;
+
+        var layout = {
+            title: {
+                    text:roomName + " Time Usage Report",
+                    font: {
+                    family: 'Courier New, monospace',
+                    size: 18
+                    },
+                    xref: 'paper',
+                    x: 0.05,
+            },
+            yaxis: {domain: [0, 0.50]},
+            autosize: false,
+            width: 1300,
+            height: 700,
+            showlegend: true,
+            legend: {
+                x: 1,
+                y: 1,
+                traceorder: 'reversed'
+            },
+            scale: 5,
+            margin: {
+                l: 50,
+                r: 50,
+                b: 100,
+                t: 100,
+                pad: 4
+            },
+            shapes: [],
+        }
+
+        roomDataContainer = $(this).find('.usage-container')[0]
+        roomData = $(roomDataContainer).data('usage')
+        var xAxis = [];
+        for (let i =0; i <= 24; i++) {
+            xAxis.push(i)
+        }
+
+        var trace1 = {
+            x: xAxis,
+            y: roomData,
+            type: 'bar',
+            text: roomData.map(String),
+            textposition: 'auto',
+            hoverinfo: 'none',
+            marker: {
+                color: 'rgb(158,202,225)',
+                opacity: 0.6,
+                line: {
+                color: 'rgb(8,48,107)',
+                width: 1.5
+                }
+            }
+        };
+
+        var data = [trace1];
+
+        var roomGraphContainer = document.querySelector("#graphs-container-"+RoomId);
+        //var graphElement = document.createElement("div");
+        //var elementId = laundryRoomId;
+        //graphElement.id = elementId;
+        //laundryroomGraphContainer.appendChild(graphElement);
+
+        //Plotly.newPlot(roomGraphContainer, data, layout, {showSendToCloud: true});
+        Plotly.newPlot(roomGraphContainer, data, layout);          
+    }
+    )
+
+})
+
+</script>
+
+</html>

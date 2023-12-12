@@ -1,0 +1,152 @@
+{% load timesheetstags %}
+
+<html>
+    <head>
+        <style>
+            details > *:not(summary){
+                margin-left: 2em;
+            }
+            /* https://stackoverflow.com/questions/47848326/indent-all-children */
+            table{
+                width: 35%;
+                border-spacing: 0.5em;
+            }
+            td {
+                text-align: center;
+                vertical-align: middle;
+            }
+            table, th, td {
+                border: 1px solid black;
+                white-space: nowrap;
+            }
+            .reportTable {
+                background-color:#eee;
+                border-collapse:collapse;
+            }
+            .reportTable th {
+                background-color:#000;
+                color:white;width:50%;
+            }
+            .reportTable td, .reportTable th {
+                padding:5px;
+                border:1px solid #000;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        {% for employee, employee_data in dataset.items %}
+            <details>
+                <summary><b>Employee: {{employee}}</b></summary>
+                {% for date, date_data in employee_data.items %}
+                <div class='date-level'>
+                    <details>
+                            <summary><b>Date: {{date}}</b></summary>
+                            <ul>
+                                <li><b>Rooms Visited:</b> {{date_data.rooms_visited}}</li>
+                                <li><b>Time Spent Working:</b> {{date_data.time_worked}}</li>
+                                <li><b>Start Time:</b> {{date_data.day_start_time}}</li>
+                                <li><b>End Time:</b> {{date_data.day_end_time}}</li>
+                                <li><b>Travel Time:</b> {{date_data.travel_time}}</li>
+                            </ul>
+                            {% for location in date_data.locations %}
+                            <details style="margin-top: 20px;">
+                                <summary>Location: {{location.name}}</summary>
+                                <ul>
+                                    <li>Dryers Started: {{location.dryers_started}} out of {{location.total_dryers}}</li>
+                                    <li>Washers Started: {{location.washers_started}} out of {{location.total_washers}}</li>
+                                    <li>Total time in room: {{location.time_in_room}}</li>
+                                    <li>Time since previous room: {{location.time_since_previous_room}}</li>
+                                    <li>Slots Scanned: {{location.scans|length}} out of {{location.total_slots}}</li>
+                                </ul>
+                                <!-- Starts Data -->
+                                <!-- Timestamp - Slot# - SlotID - MachineTag -->
+                                    <details>
+                                        <summary>Transactions</summary>
+                                        <table class="reportTable">
+                                            <thead>
+                                            <tr>
+                                            <th>Timestamp</th>
+                                            <th>Slot#</th>
+                                            <th>SlotID</th>
+                                            <th>Machine</th>
+                                            <th>Bundle Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for start in location.starts %}
+                                                <tr>
+                                                    <!-- <td>{{ start.0|time:"Y-m-d H:i:s" }}</td> timestamp -->
+                                                    <td>{% format_timestamp start.0 %}</td>
+                                                    {% for data_point in start|slice:"1:" %}
+                                                        <td>{{data_point}}</td>
+                                                    {% endfor %}
+                                                </tr> 
+                                            {% endfor %}
+                                        </tbody>
+                                        </table>
+                                        
+                                    </details>
+                                    <details>
+                                        <summary>Scans</summary>
+                                        <table class="reportTable">
+                                            <thead>
+                                            <tr>
+                                            <th>Timestamp</th>
+                                            <th>Slot#</th>
+                                            <th>SlotID</th>
+                                            <th>Machine</th>
+                                            <th>Bundle Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for scan in location.scans %}
+                                                <!-- <tr>
+                                                    {% for data_point in start %}
+                                                        <td>{{data_point}}</td>
+                                                    {% endfor %}
+                                                </tr>  -->
+                                                <tr>
+                                                    <td>{% format_timestamp scan.0 %}</td> <!-- timestamp -->
+                                                    {% for data_point in scan|slice:"1:" %}
+                                                        <td>{{data_point}}</td>
+                                                    {% endfor %}
+                                                </tr> 
+                                            {% endfor %}
+                                        </tbody>
+                                        </table>
+                                        
+                                    </details>
+                                    {% if location.non_started_slots %}
+                                    <details>
+                                        <summary>Non-Started Slots</summary>
+                                        {% for slot in location.non_started_slots %}
+                                            <p>{{slot}} ({{slot.get_bundle_status}})</p>
+                                        {% endfor %}
+                                    </details>
+                                    {% endif %}
+                            </details>
+                            {% endfor %}
+                    </details>
+                </div>
+                {% endfor %}
+            </details>
+        {% endfor %}
+    </body>
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script>
+    $(".date-level").click(function(e) {
+        var divDateLevel = $(this)[0];
+        console.log(divDateLevel);
+        var detailDateLevel = $(divDateLevel).children()[0];
+        //var childrenDetails = $(detailDateLevel).children("details");
+        var childrenDetails = $(detailDateLevel).find($("details"));
+        console.log(childrenDetails);
+        Array.from(childrenDetails).forEach(function(obj, idx) {
+            console.log(obj);
+            obj.open = true;
+        });
+    });
+    </script>
+</html>

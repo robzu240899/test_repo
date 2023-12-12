@@ -1,0 +1,5 @@
+id,laundry_group_id,display_name,fascard_code,is_active,time_zone,distance_to_competitor,num_units,square_feet_residential
+1,1,BG 1 Room 1,1,1,US/Eastern,1,100,100000
+2,1,BG 1 Room 2,2,1,US/Eastern,1,100,100000
+3,1,BG 2 Room 3,3,1,US/Eastern,1,100,100000
+4,1,BG 2 Room 4,4,1,US/Eastern,1,100,100000

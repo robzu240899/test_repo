@@ -1,0 +1,19 @@
+<html>
+
+<head>
+    <style>
+        #take-action{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    {% include "orphaned_piece_email.html" %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Save Answer">
+    </form>
+</body>
+</html>

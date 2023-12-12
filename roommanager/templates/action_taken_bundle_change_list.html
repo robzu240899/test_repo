@@ -1,0 +1,85 @@
+{% load hardwarepiecestags %}
+
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+
+    <style>
+        .new-piece {
+            font-weight: bold;
+            background-color:#FFFF00;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    {% if action_taken == 'approved' %}
+        <h3>Approved Bundle Changes</h3>
+    {% elif action_taken == 'rejected' %}
+        <h3>Rejected Bundle Changes</h3>
+    {% endif %}
+
+    <table style="width:100%">
+        <tr>
+            <th style="text-align:left">Previous Bundle</th>
+            <th style="text-align:left">New Bundle Composition</th>
+            <th style="text-align:left">Timestamp</th>
+            <th style="text-align:left">Change Type</th>
+            <th style="text-align:left">Technician</th>
+            <th style="text-align:left">Decision Maker/Approver</th>
+        </tr>
+        {% for bundle_change in bundlechangeapproval_list %}
+            <tr>
+                <td>
+                    {% include "previous_bundle_base_inlist.html" %}
+                </td>
+                <td>
+                    <ul>
+                        <li>Room: {{bundle_change.scan_pairing.location}}</li>
+
+                        {% for bundle_member in bundle_change.scan_pairing.format_new_bundle %}
+                            {% if bundle_change.change_type == bundle_member.associated_change_type %}
+                                <li class="new-piece">
+                                    {{bundle_member.name}}: {{bundle_member.obj}}
+                                    {% get_asset_urls bundle_member.obj bundle_member.asset_type as urls %}
+                                    {% if urls %}
+                                        {% for url in urls %}
+                                            <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </li>
+                            {% else %}
+                                <li>
+                                    {{bundle_member.name}}: {{bundle_member.obj}}
+                                </li>
+                            {% endif %}
+                            {% if bundle_member.name == 'Machine' %}
+                                {% if bundle_change.scan_pairing.asset_picture %}
+                                    <a href="{{bundle_change.scan_pairing.asset_picture}}" target="_blank">
+                                        (Asset Picture)
+                                    </a>
+                                {% endif %}
+                                {% if bundle_change.scan_pairing.asset_serial_picture %}
+                                    <a href="{{bundle_change.scan_pairing.asset_serial_picture}}" target="_blank">
+                                        (Asset Serial Picture)
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <li>Timestamp: {{bundle_change.scan_pairing.timestamp}}</li>
+                        <li>Bundle Type: {{bundle_change.scan_pairing.scan_type}}</li>
+                    </ul>
+                </td>
+                <td>{{bundle_change.timestamp}}</td>
+                <td>{{bundle_change.change_type}}</td>
+                <td>{{bundle_change.scan_pairing.tech_employee}}</td>
+                <td>{{bundle_change.decision_maker}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

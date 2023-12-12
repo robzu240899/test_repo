@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+</body>
+
+{{msg}}
+Enter Expenses For {{display_name}}
+<form action="/revenue-reporting/client-revenue-report-expenses/" method="post">
+
+    {% csrf_token %}
+    {{ expense_form_set.management_form }} 
+    {% for form in expense_form_set.forms %}
+    	<div>
+     	Expense Type:  {{form.expense_type}}
+    	Expense Amount:  {{form.expense_amount}}
+		{{form.non_field_errors}}
+    	</div>
+    {% endfor %}
+	
+    <input type="submit" value="Continue" />
+</form>
+
+
+</body>
+</html>

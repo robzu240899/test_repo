@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'libs/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+  <link href="{% static 'js/node_modules/angularjs-datepicker/src/css/angular-datepicker.css' %}" rel="stylesheet" type="text/css" />
+  <style type="text/css">
+    .error {
+      color: red;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+{% verbatim %}
+<div ng-app="transactionApp">
+  <div ng-controller="TransactionController">
+    <p>
+      <a href="/menu">Back to menu</a>
+    </p>
+    <h1>Transactions</h1>
+
+    <div>
+      <p>Search:</p>
+      <div>
+        <span>
+          <label>Laudry room: </label>
+          <select ng-options="room.display_name for room in laundry_rooms" 
+                  ng-model="search_data.laundry_room">
+            <option value="" selected="selected">Laudry room</option>
+          </select>
+        </span>
+        <span>
+          <label>Machine: </label>
+          <select ng-options="machine.id for machine in machines" 
+                  ng-model="search_data.machine">
+            <option value="" selected="selected">Machine</option>
+          </select>
+        </span>
+        <span>
+          <label>Slot: </label>
+          <select ng-options="slot.long_name for slot in slots" 
+                  ng-model="search_data.slot">
+            <option value="" selected="selected">Slot</option>
+          </select>
+        </span>
+        <div style="display: inline-block;">
+          <label style="display: inline-block;">Date and Time: </label>
+          <div style="display: inline-block;margin-bottom: -6px;">
+            <datepicker date-format="yyyy-MM-dd">
+              <input ng-model="search_data.date" type="text" style="width: 100px;" />
+            </datepicker>
+          </div>
+          <select ng-model="search_data.time">
+            <option value="00:00" selected="selected">00:00</option>
+            <option value="01:00">01:00</option>
+            <option value="02:00">02:00</option>
+            <option value="03:00">03:00</option>
+            <option value="04:00">04:00</option>
+            <option value="05:00">05:00</option>
+            <option value="06:00">06:00</option>
+            <option value="07:00">07:00</option>
+            <option value="08:00">08:00</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+            <option value="19:00">19:00</option>
+            <option value="20:00">20:00</option>
+            <option value="21:00">21:00</option>
+            <option value="22:00">22:00</option>
+            <option value="23:00">23:00</option>
+          </select>
+        </div>
+        <span>
+          <label>Time window (in hours): </label>
+          <input type="number" name="time_window" ng-model="search_data.time_window">
+        </span>
+        <span>
+          <label>Payment Type: </label>
+          <select ng-model="search_data.payment_type"
+                  ng-options="type for type in payment_types track by type">
+          </select>
+        </span>
+        <span>
+          <label>Activity Type: </label>
+          <select ng-model="search_data.activity_type"
+                  ng-options="type for type in activity_types track by type">
+          </select>
+        </span>
+        <span>
+          <label>Loyalty card number: </label>
+          <input type="text" name="loyalty_card_number" ng-model="search_data.loyalty_card_number">
+        </span>
+      </div>
+      <p>
+        <button ng-click="search()">Search</button>
+      </p>
+    </div>
+    <div ng-if="result.length > 0">
+      <p>Results:</p>
+      <div ng-if="success" style="color: green;">
+        Refunded
+      </div>
+      <table border="1px solid gray;">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Slot</th>
+            <th>Machine</th>
+            <th>Name</th>
+            <th>Card Number</th>
+            <th>Amount</th>
+            <th>Refunded</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="transaction in result track by transaction.id"
+              ng-class="{'error': transaction.refund_error}">
+            <td>
+              <input type="checkbox" 
+                      name="transaction[]" 
+                      value="{{transaction.id}}"
+                      ng-checked="selected_transactions.indexOf(transaction.id) > -1"
+                      ng-click="toggleSelectTransaction(transaction.id)">
+            </td>
+            <td>{{ transaction.slot.long_name }}</td>
+            <td>{{ transaction.machine.machine_text }}</td>
+            <td>{{ transaction.dirty_name }}</td>
+            <td>{{ transaction.card_number }}</td>
+            <td>{{ transaction.amount }}</td>
+            <td>{{ transaction.is_refunded }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <button ng-click="refund()">Refund Request</button>
+      </p>
+    </div>
+  </div>
+</div>
+{% endverbatim %}
+{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'js/node_modules/angular/angular.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/node_modules/angularjs-datepicker/src/js/angular-datepicker.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/apps/transaction/app.js' %}"></script>
+{% endblock %}

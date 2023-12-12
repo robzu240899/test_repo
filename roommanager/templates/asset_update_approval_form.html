@@ -1,0 +1,84 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </head>
+    <style>
+        img{
+            width: 600px;
+            height: 600px;
+        }
+        .showimagediv {
+            display: none;
+            width: 500px;
+            height: 500px;
+            margin-left: 100px;
+            margin-top: -300px;
+            position: fixed;
+            background-color: #f00;
+            z-index: 6;
+        }
+        #action-button{
+            display: none;
+        }
+         .cb-div {
+            width: 33%;
+            display:block;
+            float: left;
+         }
+    </style>
+</head>
+
+{% if obj.superseded_by %}
+
+    <p>
+        Superseded by:
+            <a href="https://system.aceslaundry.com/roommanager/asset-update-approval/{{obj.superseded_by.id}}/">
+                New Bundle Update Approval Request
+            </a>
+    </p>
+
+{% else %}
+
+    {% if not obj.rejected %}
+        {% include "asset_update_email.html" %}
+
+        <p><b>Bundle Type</b>: {{obj.scan_pairing.scan_type}}</p>
+
+        <p><b>Timestamp</b>: {{obj.timestamp}}</p>
+
+        <p><b>Technician</b>: 
+            {% if obj.scan_pairing.tech_employee %}
+                {{obj.scan_pairing.tech_employee}}
+            {% else %}
+                {{obj.scan_pairing.codereadr_username}}
+            {% endif %}
+        </p>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.errors}}
+        {{form.as_p}}
+        {% if not obj.approved and not obj.rejected %}
+            <input type="submit" value="Update">
+        {% endif %}
+    </form>
+    {% else %}
+    <h3><b>Request rejected.</b></h3>
+    {% endif %}
+
+
+{% endif %}
+<script>
+    $(function(){
+    $(".toggler").on("click", function(){
+        $(this)
+        .toggleClass("expander expanded")
+        .parent().next().toggle();
+    });
+});
+</script>
+
+</html>

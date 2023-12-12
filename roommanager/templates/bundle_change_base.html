@@ -1,0 +1,242 @@
+{% load hardwarepiecestags %}
+    <body>
+    <p>
+        <b>
+            {% block title %}Required Approval for a Bundle Change{% endblock %}
+        </b>
+    </p>
+    <p style="text-indent: 50px;">
+        <b>
+            {% block main_message %}
+            {% endblock %}
+        </b>
+    </p>
+
+    {% block body %}
+
+    <p>
+        <b>Bundle Change Type</b>: {{obj.change_type}}
+    </p>
+
+
+    {% if obj.change_type == 'NEW' %}
+        <p><b>New Bundle Composition:</b></p>
+
+            <table style="width:100%" class="table">
+                <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                    <th>Extras</th>
+                </tr>
+                <tr>
+                    <td>New Card Reader Identifier</td>
+                    <td> {{obj.scan_pairing.card_reader_code}} </td>
+                    <td>
+                        {% get_asset_urls obj.scan_pairing.card_reader_code 'CARD_READER' as card_reader_urls %}
+                        {% if card_reader_urls %}
+                            {% for url in card_reader_urls %}
+                                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                            {% endfor %}
+                        {% else %}
+                            (No Relevant links to card reader history)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>New Machine Identifier</td>
+                    <td>{{obj.scan_pairing.asset_code}}</td>
+                    <td>
+                        {% get_asset_urls obj.scan_pairing.asset_code 'MACHINE' as machine_urls %}
+                        {% if machine_urls %}
+                            {% for url in machine_urls %}
+                                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                            {% endfor %}
+                        {% else %}
+                            (No Relevant links to machine history)
+                        {% endif %}
+                        {% get_machine_pics obj.scan_pairing.asset_code as machine_pics %}
+                        {% if machine_pics %}
+                            {% for img_data in machine_pics %}
+                                <a href="{{img_data.1}}">({{img_data.0}})</a>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>New Slot Identifier</td>
+                    <td>{{obj.scan_pairing.slot}}</td>
+                    <td>
+                        {% get_asset_urls obj.scan_pairing.slot.id 'SLOT' as slot_urls %}
+                        {% if slot_urls %}
+                            {% for url in slot_urls %}
+                                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                            {% endfor %}
+                        {% else %}
+                            (No Relevant links to slot history)
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+    {% else %}
+        <p> 
+            <b>
+            {% if obj.change_type == 'CARD_READER_CHANGE' %}
+                New Card Reader Identifier: {{obj.scan_pairing.card_reader_code}}
+                {% get_asset_urls obj.scan_pairing.card_reader_code 'CARD_READER' as urls %}
+            {% elif obj.change_type == 'MACHINE_CHANGE' %}
+                New Machine Identifier: {{obj.scan_pairing.asset_code}}
+                {% get_asset_urls obj.scan_pairing.asset_code 'MACHINE' as urls %}
+            {% elif obj.change_type == 'SLOT_CHANGE' %}
+                New Slot Identifier: {{obj.scan_pairing.slot}}
+                {% get_asset_urls obj.scan_pairing.slot.id 'SLOT' as urls %}
+            {% endif %}
+            </b>
+            {% if urls %}
+                {% for url in urls %}
+                    <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                {% endfor %}
+            {% else %}
+                (No Relevant links to machine history)
+            {% endif %}
+        </p>
+    {% endif %}
+    {% if obj.change_type == 'MACHINE_CHANGE' %}
+    <p>
+        <b>Current Pictures Associated with the Machine</b>:
+        {% get_machine_pics obj.scan_pairing.asset_code as machine_pics %}
+        {% if machine_pics %}
+            {% for img_data in machine_pics %}
+                <a href="{{img_data.0}}">{{img_data.1}}</a>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    </p>
+    <p>
+    {% if obj.change_type == 'WAREHOUSE' %}
+        Piece(s) being Warehoused:
+        {% if obj.scan_pairing.asset_code %}
+            Machine: {{obj.scan_pairing.asset_code}}
+            {% get_asset_urls obj.scan_pairing.asset_code 'MACHINE' as urls %}
+            {% if urls %}
+                {% for url in urls %}
+                    <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                {% endfor %}
+            {% endif %}
+            {% get_machine_pics obj.scan_pairing.asset_code as machine_pics %}
+            {% if machine_pics %}
+                {% for img_data in machine_pics %}
+                    <a href="{{img_data.0}}">{{img_data.1}}</a>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
+        {% if obj.scan_pairing.card_reader_code %}
+            Card Reader: {{obj.scan_pairing.card_reader_code}}
+            {% get_asset_urls obj.scan_pairing.card_reader_code 'CARD_READER' as urls %}
+            {% if urls %}
+                {% for url in urls %}
+                    <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                {% endfor %}
+            {% endif %}
+        {% endif %}</p>
+    {% endif %}
+    <p><b>Location</b>: {{obj.scan_pairing.location}}</p>
+
+    {% if obj.change_type != 'NEW' %}
+        <div style="border-style: solid; width: 90%;">
+            <p><b>Previous Bundle Composition</b></p>
+
+            <table style="width:100%" class="table">
+                <tr>
+                    <th>Field</th>
+                    <th>Value</th>
+                    <th>Extras</th>
+                </tr>
+                <tr>
+                    <td><b>Card Reader</b></td>
+                    <td>{{obj.previous_bundle.card_reader}}</td>
+                    <td>
+                        {% get_asset_urls obj.previous_bundle.card_reader.card_reader_tag 'CARD_READER' as previous_card_reader_urls %}
+                        {% if previous_card_reader_urls %}
+                            {% for url in previous_card_reader_urls %}
+                                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                            {% endfor %}
+                        {% else %}
+                            (No Relevant links to history)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Slot</b></td>
+                    <td>{{obj.previous_bundle.slot}}</td>
+                    <td>
+                        {% get_asset_urls obj.previous_bundle.slot.id 'SLOT' as previous_slot_urls %}
+                        {% if previous_slot_urls %}
+                            {% for url in previous_slot_urls %}
+                                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                            {% endfor %}
+                        {% else %}
+                            (No Relevant links to history)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Machine</b></td>
+                    <td>{{obj.previous_bundle.machine.get_basic_name}} (Make&Model: {{obj.previous_bundle.machine.get_asset_model}})</td>
+                    <td>
+                        {% get_asset_urls obj.previous_bundle.machine.asset_code 'MACHINE' as previous_machine_urls %}
+                        {% if previous_machine_urls %}
+                            {% for url in previous_machine_urls %}
+                                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                            {% endfor %}
+                        {% else %}
+                            (No Relevant links to history)
+                        {% endif %}
+                        {% get_machine_pics obj.previous_bundle.machine.asset_code as previous_bundle_machine_pics %}
+                        {% if previous_bundle_machine_pics %}
+                            {% for img_data in previous_bundle_machine_pics %}
+                                <a href="{{img_data.1}}">({{img_data.0}})</a>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Bundle Start Time</b></td>
+                    <td>{{obj.previous_bundle.start_time}}</td>
+                    <td></td>
+                </tr>
+            </table>
+            <ul>
+            </ul>
+
+        </div>
+    {% endif %}
+    {% if obj.scan_pairing.asset_picture %}
+        <p><b> Asset Picture Uploaded: </b> 
+
+            <span><button class ="toggler expander btn btn-link"> Show/Hide Picture</button></span>
+            <img style="margin-left: 4em; display: none;" src="{{obj.scan_pairing.asset_picture}}" alt="">
+
+        </p>
+    {% else %}
+        <p>No Asset Picture Uploaded</p>
+    {% endif %}
+
+    {% if obj.scan_pairing.asset_serial_picture %}
+        <p><b> Asset Serial Picture Uploaded (For {{obj.scan_pairing.asset_code}})</b>:
+
+            <span><button class ="toggler expander btn btn-link"> Show/Hide Picture</button> </span>
+            <img style="margin-left: 4em; display: none;" src="{{obj.scan_pairing.asset_serial_picture}}" alt="">
+        </p>
+
+    {% else %}
+        <p>No Asset Serial Picture uploaded</p>
+    {% endif %}
+
+    {% endblock %}
+
+    {% block action_button %}
+        <a id='action-button' href="https://system.aceslaundry.com/roommanager/bundle-change-approval/{{obj.id}}/">Take Action</a>
+    {% endblock %}
+
+    </body>

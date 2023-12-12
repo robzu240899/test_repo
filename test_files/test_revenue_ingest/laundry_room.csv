@@ -1,0 +1,6 @@
+id,laundry_group_id,display_name,fascard_code,is_active,time_zone,distance_to_competitor,num_units,square_feet_residential,billing_group_id
+1,1,1 Arden ST,21,1,US/Eastern,1,100,100000,1
+2,1,101 Audubon AVE,39,1,US/Eastern,0.25,20,10000,1
+61,1,256 E 10th ST,372,1,US/Eastern,NULL,NULL,NULL,1
+62,2,Nostrand Gardens -- 2425 Haring ST,368,1,US/Eastern,NULL,NULL,NULL,1
+888,1,Test,123456,1,US/Eastern,NULL,NULL,NULL,2

@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<!-- XDSoft DateTimePicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css"/>
+
+<style media="screen">
+  #select_transactions {
+    display: none;
+  }
+</style>
+    </head>
+    <body>
+      {{msg}}
+      <form action="" method="post">
+        {% csrf_token %}
+        {{form.errors}}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+    </body>
+
+    <script>
+        $(function () {
+          $("#id_base-start_date").datetimepicker({
+            format: 'm/d/Y',
+            timepicker: false,
+            closeOnDateSelect: true,
+          });
+          $("#id_base-end_date").datetimepicker({
+            format: 'm/d/Y',
+            timepicker: false,
+            closeOnDateSelect: true,
+          });
+        });
+      </script>
+</html>

@@ -1,0 +1,171 @@
+###################################################### CLASSES ##################################################################
+FascardGhostBrowser
+  Description:
+    - A wrapper of Selenium's Ghost Driver that allows us to navigate and interact with the Fascard Website 
+	- Often used to scrape the Fascard website 
+	- Can used to manipulate the Fascard website (ie- refunds, checks)
+	- Can handle most javascript since it's based on Ghost Driver
+  Methods:
+    -init(laundry_group_id)
+	  -Description:
+	    -initializes the FascardGhostBrowser
+	  -Parameters:
+	    -laundry_group_id: Integer id of LaundryGroup (aka Fascard login) ORM object  
+	-open(url, expected_url, must_match)
+	  -Description:
+	    -Opens the url
+	  -Parameters:
+	    -url: url to open 
+		-expeted_url: optional, defaults to url, the url we expect after opening. 
+        -must_match:  optional boolean, defaults to True.  Determines False, no action if url <> expected_url.  Otherwise, see below.
+		-try_login_on_failture: optional boolean, defaults to True, ignrored if must_match = False.  If true, try to login on mismatch.  Otherwise, raise an Excepction
+    -login()
+	  -Description:
+	    -Performs the Fascard login 
+	  -Parameters:
+	    -None
+  Related Configuration points:  
+    -cred/<environment>/fascard.csv
+	-FascardSeleniumLoginConfig
+	
+
+PriceScraperManager
+  **HIGH LEVEL MANAGER METHOD- INROAD TO PRICE HISTORY DATA COLLECTION**
+  Functions:
+    -scrape(laundry_room_id)
+    -Description:
+      -Scrapes today's pricing history for the laundry room and saves it as PriceHistory objects in the dababase
+
+PriceBrowser
+  Description:
+    -Provides "with" functionality to _PriceBrowser
+	
+_PriceBrowser
+  Description:
+    -Browser that can manipulate Fascard website to get machine level pricing data
+  Inheritance/Interfaces:
+    -FascardGhostBrowser
+  Methods:
+    -init(laundry_room_id)
+	  -Description:
+	    -initializes the PricingBrowser
+	  -Parameters:
+	    -laundry_room_id: Integer id of LaundryRoom (aka Fascard login) ORM object  
+	-get_price_data()
+	  -Description:
+	    -opens the appropriate pricing report
+	  -Parameters:
+	    -None
+	  -Returns a list of Price (non ORM) objects 
+	  
+Price- not and ORM object 
+  Description:
+    -Simple class that represents the price data. 
+	-Used as a staging class so that we can seperate scraping, cleaning, and saving data 
+  Methods:
+    -init(aundry_room, machine_type, cycle_type, price)
+	  -Description:
+	    -initializes the Price
+		-also cleans the input values 
+	  -Parameters:
+	    -laundry_room: LaundryRoom ORM object   
+		-machine_type: text scraped from Fascard 
+		-price: text scraped from Fascard
+		-cycle_type: text scraped from Fascard
+
+PriceToOrm
+  Methods:
+    -convert(price, dt)
+	  -Description:
+        -Saves pricing history to dababase (PriceHistory ORM object).
+	  -Parameters:
+	    -price: Price (non ORM) object
+		-dt: date object, non timezone aware
+
+PricingReport 
+  Description:
+    -Used to generate Pricing History Reports 
+	-csv report format 
+	--headers- each column is a date range.  in between the date ranges, no pricing chages 
+	--columns are laundry_room / machine_type / cycle type, each getting its own indentation level
+  Methods:
+    -init(start_date, final_date, laundry_room_ids)
+	  -Parameters:
+	    -start_date, date inclusive 
+		-final_date, date inclusive 
+		-laundry_room_id, list of integers cooresponding to LaundryRoom id's 
+	-generate_csv()
+	  -Returns
+	     -string, file location the csv is saved to
+	-generate_formatted_data()
+	   -Returns 
+	     -list of lists that represent the pricing history data 
+		 -headers first rows- Laundry Room Dipslay Name, Machine Type, Cycle, Type, Date Ranges, 
+		 -other rows are the pricing data
+	   -Algorithm Steps:
+		 --Determine the date ranges where pricing is constant.  Date ranges are inclusive 
+		 --Create list of laundry room / machine type/ cycle type tuples 
+		 --Use above as dictionary keys.  Values are prices 
+		 --Create lists of lists that will be used to make the csv 
+	  
+		
+###################################################### MODELS ##################################################################
+Models:
+  -LaundryGroup:  
+    -Description:
+	  -Represents a Fascard Account.  
+	  -NB: Many fascard objects unique only when you include their associated LaundryGroup
+  -LaundryRoom:
+    -Description:
+	  -Represents a Laundry Room.
+    -Important fields:
+	  -laundry_group = Foreign Key to LaundryGroup
+	  -display_name = Display Name we use in reports, admin, etc.
+	  -fascard_code = Code associated with the laundry Room in the Fascard system.  For example, 101 Audobon has a fascard code of 39.  It's url is https://admin.fascard.com/86/location?locid=39.  NB: fascard_code is only unique within a LaundryGroup and not universally.
+  -PriceHistory:
+    -Description
+	  -Historical record of machine pricing 
+	-Important Fields 
+	  -laundry_room : Foreign Key to LaundryRoom
+	  -machine_type : CharField.  Note this is not an enum.
+      -cycle type   :  CharField.  Again not an enum
+      -price_date   : DateField 	  
+  
+ 
+
+###################################################### CONFIGURATION ##################################################################
+ 
+Configuration Points:
+  -cred/<environment>/fascard.csv.
+    -Description:
+      -Allows us to set the login and url number information for Fascard.
+	-Format:
+	  -csv with headers
+      -comma delimited	  
+	--Parameters:
+      --laundry group id, column 0, integer cooresponding to the associated LaundryGroup ORM object.
+	  --user name, column 1
+	  --password, column 2
+	  --url number, column 3, url number ie the 381 in admin.fascard.com/381/settings 
+
+  -FascardLoginConfig
+    -Description:
+	  -Configuration on how to find login elements for legacy Fascard Browser
+	-Format:
+	  -in code, fascard.config
+	-Deprication notes:
+	  -should be removed after merging legacy Fascard Browser and FascardGhostBrowser
+  -FascardSeleniumLoginConfig
+    -Description:
+	  -Configuration on how to find login elements for FascardGhostBrowser
+	-Format:
+	  -in code, fascard.config
+	-NB:
+	  -If you need to change how an element is found, ie xpath vs id, you must also change the code.
+  -FascardSeleniumPricingConfig
+    -Deprication:
+      -Configuration for navigating the Fascard website in order to get the pricing data 
+	-Format:
+	  -in code, fascard.config
+	-NB:
+	  -If you need to change how an element is found, ie xpath vs id, you must also change the code.

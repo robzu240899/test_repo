@@ -1,0 +1,118 @@
+{% load hardwarepiecestags %}
+<html>
+
+<head>
+    <style>
+        select {
+            height: 500px;
+        }
+        .new-piece {
+            font-weight: bold;
+            background-color:#FFFF00;
+        }
+    </style>
+</head>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+
+    {% if data %}
+        {% for room, logs in data.items %}
+            <h3>Room: {{room.display_name}}</h3>
+
+            {% if logs %}
+
+                <table style="width:100%">
+                    <tr>
+                        <th style="text-align:left">Old Piece</th>
+                        <th style="text-align:left">New Piece</th>
+                        <th style="text-align:left">Change Type</th>
+                        <th style="text-align:left">Timestamp</th>
+                        <th style="text-align:left">Technician</th>
+                        <th style="text-align:left">Previous Bundle Composition</th>
+                        <th style="text-align:left">New Bundle Composition</th>
+                    </tr>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{log.get_old_piece}}</td>
+                            <td>{{log.get_new_piece}}</td>
+                            <td>{{log.change_type}}</td>
+                            <td>{{log.timestamp}}</td>
+                            <td>{{log.technician}}</td>
+                            <td>
+                                <ul>
+                                    <li>Room: {{log.old_bundle.location}}</li>
+                                    {% for bundle_member in log.old_bundle.format_bundle %}
+                                        {% if log.change_type == bundle_member.associated_change_type %}
+                                            <li class="new-piece">
+                                                {{bundle_member.name}}: {{bundle_member.obj}}
+                                                {% get_asset_urls bundle_member.obj bundle_member.asset_type as urls %}
+                                                {% if urls %}
+                                                    {% for url in urls %}
+                                                        <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                                                    {% endfor %}
+                                                {% endif %}
+                                        {% else %}
+                                            <li>
+                                                {{bundle_member.name}}: {{bundle_member.obj}}
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if log.old_bundle.machine.asset_serial_picture %}
+                                        <li>
+                                            <a href="{{log.old_bundle.machine.asset_serial_picture}}" target="_blank">Asset Serial Picture</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if log.old_bundle.machine.asset_picture %}
+                                        <li>
+                                            <a href="{{log.old_bundle.machine.asset_serial_picture}}" target="_blank">Asset Picture</a>
+                                        </li>
+                                    {% endif %}
+                                    <li>Start Time: {{log.old_bundle.start_time}}</li>
+                                    <li>Bundle Type: {{log.old_bundle.bundle_type}}</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li>Room: {{log.new_bundle.location}}</li>
+                                    {% for bundle_member in log.new_bundle.format_bundle %}
+                                        {% if log.change_type == bundle_member.associated_change_type %}
+                                            <li class="new-piece">
+                                                {{bundle_member.name}}: {{bundle_member.obj}}
+                                                {% get_asset_urls bundle_member.obj bundle_member.asset_type as urls %}
+                                                {% if urls %}
+                                                    {% for url in urls %}
+                                                        <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </li>
+                                        {% else %}
+                                            <li>
+                                                {{bundle_member.name}}: {{bundle_member.obj}}
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if log.new_bundle.machine.asset_serial_picture %}
+                                        <li>
+                                            <a href="{{log.new_bundle.machine.asset_serial_picture}}" target="_blank">Asset Serial Picture</a>
+                                        </li>
+                                    {% endif %}
+                                    {% if log.new_bundle.machine.asset_picture %}
+                                        <li>
+                                            <a href="{{log.new_bundle.machine.asset_serial_picture}}" target="_blank">Asset Picture</a>
+                                        </li>
+                                    {% endif %}
+                                    <li>Start Time: {{log.new_bundle.start_time}}</li>
+                                    <li>Bundle Type: {{log.new_bundle.bundle_type}}</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</html>

@@ -1,0 +1,9 @@
+{% extends "bundle_change_base.html" %}
+{% load hardwarepiecestags %}
+
+    {% block title %}Required Approval for a Bundle Change{% endblock %}
+
+    {% block main_message %}
+        Warning: If this Bundle Change is actually just an Asset Tag replacement, please
+        ignore this email and change the tag manually in the admin dashboard 
+    {% endblock %}

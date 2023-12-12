@@ -1,0 +1,33 @@
+<html>
+
+<body>
+    
+    <p>
+        A Hardware Piece was Orphaned. Action Needed regarding its destination
+    </p>
+
+    <p>
+        <b>
+            System Message: {{obj.hbr.message}}
+        </b>
+    </p> 
+    <p>
+        <b>
+            Hardware Type: {{obj.hbr.hardware_type}}
+        </b>
+    </p>
+    <p>
+        Assigned Technician: {{obj.hbr.assigned_technician}}
+    </p>
+    <p>
+        Timestamp: {{obj.hbr.timestamp}}
+    </p>
+
+    <p>
+        <a id='take-action' href="https://system.aceslaundry.com/roommanager/orphaned-piece-required-answer/{{obj.id}}/">
+            Take Action
+        </a>
+    </p>
+
+</body>
+</html>

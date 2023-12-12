@@ -1,0 +1,2 @@
+id,laundry_group_id,display_name,fascard_code,is_active,time_zone,distance_to_competitor,num_units,square_feet_residential,billing_group_id
+1,1,1 Arden ST,21,1,US/Eastern,1,100,100000,1

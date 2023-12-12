@@ -1,0 +1,20 @@
+<html>
+<body>
+    <p>Sucessfully created work order for the refund transaction you requested.</p>
+    <p>Refund information: </p>
+    <ul>
+        <li>Amount: ${{data.amount}}</li>
+        <li>Timestamp: {{data.timestamp}}</li>
+        <li>Refund Type: {{data.get_refund_channel_display}}</li>
+        <li>Fascard User Account ID: {{data.fascard_user_account_id}}</li>
+        <li>
+            <a href="https://admin.fascard.com/86/loyaltyaccounts?recid={{data.fascard_user_account_id}}", target="_blank">
+                Fascard User Account
+            </a>
+        </li>
+        <li>Transaction Internal ID: {{data.transaction__id}}</li>
+        <li>Transaction Date: {{data.transaction__local_transaction_time}}</li>
+    </ul>
+    <a href="{{url}}", target="_blank">See Work Order</a>
+</body>
+</html>

@@ -1,0 +1,4 @@
+id,display_name,description,expense_type
+1,"Internet fee","Internet connection expense",STANDARD
+2,"cc Processing fee","Credit Card processing fee","CREDIT CARD SPLIT"
+3,"cc Gateway","credit card Gateway fee","CREDIT CARD SPLIT"

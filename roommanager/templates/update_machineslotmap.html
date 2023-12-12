@@ -1,0 +1,32 @@
+<html>
+
+<head>
+  <style>
+    li{
+      padding-left: 5px;
+    }
+  </style>
+</head>
+
+<h3>Location: {{location}}</h3>
+
+<p>Slots and MachineSlotMaps: </p>
+{% for slot in slots %}
+
+    <p><b>Slot {{slot}}</b></p>
+    <ul>
+    {% for msm in slot.machineslotmap_set.all reversed %}
+      <li><b>Previous MSM: </b>{{msm.start_time}} - {{msm.end_time}} <b>Active:</b> {{msm.is_active}}. <b>Equipment Type:</b> {{msm.machine.equipment_type}}</li>
+    {% endfor %}
+  </ul>
+{% endfor %}
+
+
+<h3>Modify Effectuation Date of Current MachineSlotMap in Slot: </h3>
+
+    <form class="" action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Submit" />
+      </form>
+</html>

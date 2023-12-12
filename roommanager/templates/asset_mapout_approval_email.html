@@ -1,0 +1,75 @@
+<html>
+    <body>
+    <p>
+        <b>
+            Required Approval for an Asset Mapout Scan
+        </b>
+    </p>
+    <p>
+        <b>
+            Asset Type: {{obj.asset_type}}
+            {% if obj.asset_type == 'MACHINE' %}
+                <a href="http://system.aceslaundry.com/admin/roommanager/machine/{{obj.asset_id}}/change/">
+                    Asset in Admin Dashboard
+                </a>
+            {% elif obj.asset_type == 'CARD_READER' %}
+                <a href="http://system.aceslaundry.com/admin/roommanager/cardreaderasset/{{obj.asset_id}}/change/">
+                    Asset in Admin Dashboard
+                </a>
+            {% endif %}
+        </b>
+    </p>
+
+    <p>
+        <b>New Status: {{obj.status}}</b>
+    </p>
+    <p>
+        <b>Timestamp</b>: {{obj.timestamp}} 
+    </p>
+    <p>
+        <b>Asset Tag</b>: {{obj.scan_asset_tag}}
+    </p>
+
+    {% if obj.current_asset_bundle %}
+
+        <p><b>Location</b>: {{obj.current_asset_bundle.location}}</p>
+
+        <p><b>Asset's Current Bundle Composition</b></p>
+        <ul>
+            <li>
+                <b>Card Reader</b>: {{obj.current_asset_bundle.card_reader}}
+                <a href="http://system.aceslaundry.com/admin/roommanager/cardreaderasset/{{obj.current_asset_bundle.card_reader.id}}/change/" target="_blank">
+                    (Admin Dashboard)
+                </a>
+
+                {% if obj.current_asset_bundle.card_reader.upkeep_id %}
+                    <a href="https://app.onupkeep.com/#/app/assets/view/{}" target="_blank">
+                        (Upkeep)
+                    </a>
+                {% endif %}
+            </li>
+            <li>
+                <b>Slot</b>:
+                <a href="http://system.aceslaundry.com/admin/roommanager/slotview/{{obj.current_asset_bundle.slot.id}}/change/" target="_blank">
+                    {{obj.current_asset_bundle.slot}} (Admin Dashboard)
+                </a>
+            </li>
+            <li>
+                <b>Machine</b>: {{obj.current_asset_bundle.machine}} (Make&Model: {{obj.current_asset_bundle.machine.get_asset_model}})
+                <a href="http://system.aceslaundry.com/admin/roommanager/machine/{{obj.current_asset_bundle.machine.id}}/change/" target="_blank">
+                     (Admin Dashboard)
+                </a>
+                {% if obj.current_asset_bundle.machine.upkeep_id %}
+                    <a href="https://app.onupkeep.com/#/app/assets/view/{{obj.current_asset_bundle.machine.upkeep_id}}" target="_blank">
+                        (Upkeep)
+                    </a>
+                {% endif %}
+            </li>
+            <li><b>Start Time</b>: {{obj.current_asset_bundle.start_time}}</li>
+        </ul>
+    {% endif %}
+
+    <a id='action-button' href="https://system.aceslaundry.com/roommanager/asset-mapout-approval/{{obj.id}}/" target="_blank">Take Action</a>
+    </body>
+</html>
+

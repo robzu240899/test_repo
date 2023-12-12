@@ -1,0 +1,39 @@
+{% load hardwarepiecestags %}
+<html>
+    <body>
+    <p>
+        <b>
+            Required Approval for a Tag Swap Scan
+        </b>
+    </p>
+    <p>
+        {{obj_type}}
+        <b>Current Tag</b>: {{obj.current_tag}}
+        {% if obj_type == 'Machine' %}
+            {% get_asset_urls obj.current_tag "MACHINE" as urls %}          
+        {% elif obj_type == "CardReaderAsset" %}
+            {% get_asset_urls obj.current_tag "CARD_READER" as urls %}  
+        {% else %}
+            <p></p>
+        {% endif %}
+        {% if urls %}
+            {% for url in urls %}
+                <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+            {% endfor %}
+        {% else %}
+            (No Relevant links to machine history)
+        {% endif %}
+    <p>
+        <b>New Tag</b>:  {{obj.new_tag}}
+    </p>
+    <p>
+        <b>Technician</b>: {{obj.tech_username}}
+    </p>
+    <p>
+        <b>Timestamp</b>: {{obj.timestamp}} 
+    </p>
+
+    <a id='action-button' href="https://system.aceslaundry.com/roommanager/swap-tag-approval/{{obj.id}}/" target="_blank">Take Action</a>
+    </body>
+</html>
+

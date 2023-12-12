@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <!-- Select2 CSS --> 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" /> 
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <!-- Select2 JS --> 
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+</head>
+<body>
+    {{form.errors}}
+    <form action="" method="post">
+        {% csrf_token %}
+        
+
+        {{form.as_p}}
+
+        <input type="submit" value="Send">
+    </form>
+
+    {% if msg %}
+    <b>{{msg}}</b>
+    {% endif %}
+</body>
+
+<script>
+    $(document).ready(function(){
+    // Initialize select2
+    // $("#id_slot").select2();
+
+    $('#id_laundry_room').change(function(){
+        console.log("Changed room");
+        var index = this.selectedIndex;
+        var option = $(this.options[index]);
+        var el = $('select[name="slot"]');
+        $.ajax({
+            type: "GET",
+            url: "/revenue/get-slots/",
+            cache: false,
+            data: {
+                laundry_room: option.val()
+            },
+            success: function(result) {
+                var toAppend='<option value="">Unknown</option>'
+                for(var slot_index in result.slots){
+                    toAppend+='<option value="'+result.slots[slot_index].id+'">'+ result.slots[slot_index].name +'</option>'
+                }
+                $("#id_slot").empty();
+                $("#id_slot").append(toAppend)
+                $('#id_slot').attr("hidden",false);
+            },
+            error: function(result) {
+                console.log('error');
+            }
+        });
+    });
+
+
+    });
+</script>
+
+</html>

@@ -1,0 +1,3 @@
+RecID,DateTime,TransType,LocationID,MachNo,TransID,CardType,CardNumber,CreditCardAmount,CashAmount,BonusAmount,AdditionalInfo,RootTransactID,LoyaltyCardNumber,NewBalance,NewBonus,NewFreeStarts,NewLoyaltyPoints,CardName,UserAccountID,LoyaltyPoints,EmployeeUserID,TransSubType,BalanceAmount,FreeStarts,UnfundedAmount,SysConfigID,fascard_user_id
+1000001,02/02/2017 10:10:00 PM,2,368,0,0,2,xxx6231,8.6,0,0,20401925436/040621,0,,0,0,0,0,WATSON/JUDITH,0,0,0,0,0,0,0,212,
+1000002,02/02/2017 6:42:00 PM,2,368,0,0,2,xxx3606,9,0,0,20401335257/02090B,0,,0,0,0,0,GALONSKY/DENISE,0,0,0,0,0,0,0,212,

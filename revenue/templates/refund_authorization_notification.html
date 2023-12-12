@@ -1,0 +1,46 @@
+<html>
+<body>
+    {% if obj.approved %}
+        <b>STATUS: Approved
+        {% if completed %}
+            and COMPLETED SUCCESSFULLY
+        {% endif %}
+        </b>
+    {% endif %}
+    {% if obj.rejected %}
+        <b>STATUS: Rejected</b> 
+    {% endif %}
+    <p>Refund Type: {{obj.get_refund_channel_display}}</p>
+    <p>Refund Amount: {{obj.refund_amount}}</p>
+    <p>Description: {{obj.description}}</p>
+    <p>Transaction ID: {{obj.transaction.fascard_record_id}}</p>
+    {% if obj.transaction.additional_info %}
+        <p>Authorize ID: {{obj.transaction.additional_info}} </p>
+    {% endif %}
+    <p>Creation Date: {{obj.timestamp}}</p>
+    {% if obj.fascard_user %}
+        <p>Fascard User (Name - FascardID): {{obj.fascard_user.name}} - {{obj.fascard_user.fascard_user_account_id}}</p>
+    {% endif %}
+
+    {% if obj.transaction.assigned_laundry_room %}
+        <p>Assigned Laundry Room: {{obj.transaction.assigned_laundry_room}}</p>
+    {% endif %}
+
+    {% if obj.transaction.slot %}
+        <p>Assigned Slot: {{obj.transaction.slot}}</p>
+    {% endif %}
+
+    {% if obj.transaction.machine %}
+        <p>Assigned Machine: {{obj.transaction.machine}}</p>
+    {% endif %}
+
+    {% if obj.wait_for_settlement %}
+        <h4>Important: The transactions will be refunded after settlement. Approximately today at midnight</h4>
+    {% endif %}
+
+    {% if admin_url %}
+        <a href="{{admin_url}}">{{admin_url}}</a>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <style media="screen">
+          #id_employee {
+            height: 600px;
+            width: 400px;
+          }
+        </style>
+      </head>
+
+<body>
+  {{form.errors}}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" />
+    </form>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+    "myattr": {
+      "DataType": "String",
+      "StringValue": "Some Value"
+    },
+    "myattr2": {
+      "DataType": "Binary",
+      "BinaryValue": "Another Value"
+    },
+    "myattr3": {
+      "DataType": "Number",
+      "StringValue": "123"
+    }
+}

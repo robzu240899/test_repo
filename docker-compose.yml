@@ -1,0 +1,28 @@
+#build a functioning docker-compose.yml file
+version: '3.8'
+
+services:
+  django:
+    env_file: .env
+    image: django-docker:0.0.1
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+
+  db:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword  # You can change this if needed
+      - MYSQL_DATABASE=locallaundry
+      - MYSQL_USER=juan
+      - MYSQL_PASSWORD=laundryadminpassword
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

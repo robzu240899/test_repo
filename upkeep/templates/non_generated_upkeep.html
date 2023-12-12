@@ -1,0 +1,80 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <!-- XDSoft DateTimePicker -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css"/>
+
+    <style media="screen">
+        #select_transactions {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+
+    <form class="" action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Submit" />
+      </form>
+
+
+
+
+    {% if assets %}
+        <h4>Assets</h4>
+        {% for asset in assets %}
+        <p>
+            {{asset.name}} (<a href="https://app.onupkeep.com/#/app/assets/view/{{asset.upkeep_id}}" target="_blank">
+                Upkeep URL
+            </a>)
+
+            {% if asset.image %}
+                    <a href="{{asset.image}}">
+                        (Image)
+                    </a>
+            {% endif %}
+            {% if asset.work_orders %}
+                <span>
+                    Work Orders: {{asset.work_orders.count}}
+                </span>
+            {% endif %}
+        </p>
+        {% endfor %}
+    {% endif %}
+
+
+
+    {% if locations %}
+        <h4>Locations</h4>
+        {% for location_upkeep_id in locations %}
+        <p>
+            <a href="https://app.onupkeep.com/#/app/location/details/{{location_upkeep_id}}" target="_blank">
+                https://app.onupkeep.com/#/app/location/details/{{location_upkeep_id}}
+            </a>
+        </p>
+        {% endfor %}
+
+    {% endif %}
+
+    {% if meters %}
+        <h4>Meters</h4>
+        {% for meter_upkeep_id in meters %}
+        <p>
+            <a href="https://app.onupkeep.com/#/app/meters/view/{{meter_upkeep_id}}" target="_blank">
+                https://app.onupkeep.com/#/app/meters/view/{{meter_upkeep_id}}
+            </a>
+        </p>
+        {% endfor %}
+    {% endif %}
+</body>
+
+</html>

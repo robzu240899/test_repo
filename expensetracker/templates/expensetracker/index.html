@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'libs/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+<link href="{% static 'js/node_modules/angularjs-datepicker/src/css/angular-datepicker.css' %}" rel="stylesheet" type="text/css" />
+<style type="text/css">
+  .has-error {
+    color: red;
+  }
+
+  .has-error select, 
+  .has-error input {
+    border: 1px solid red;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% verbatim %}
+<div ng-app="expenseTrackerApp">
+  <div ng-controller="ExpenseTrackerController">
+    <p>
+      <a href="/menu">Back to menu</a>
+    </p>
+    <h1>Expense Tracker</h1>
+
+    <div>
+      <p>Search:</p>
+      <div>
+        <span>
+          <label>Laudry room: </label>
+          <select ng-options="room.id for room in laundry_rooms" 
+                  ng-model="search_data.laundry_room">
+            <option value="" selected="selected">Laudry room</option>
+          </select>
+        </span>
+        <span>
+          <label>Machine: </label>
+          <select ng-options="machine.id for machine in machines" 
+                  ng-model="search_data.machine">
+            <option value="" selected="selected">Machine</option>
+          </select>
+        </span>
+        <span>
+          <label>Status: </label>
+          <select ng-options="status for status in statuses track by status" 
+                  ng-model="search_data.status">
+            <option value="" selected="selected">Status</option>
+          </select>
+        </span>
+        <div style="display: inline-block;">
+          <label style="display: inline-block;">From: </label>
+          <div style="display: inline-block;margin-bottom: -6px;">
+            <datepicker date-format="yyyy-MM-dd">
+              <input ng-model="search_data.start_date" type="text"/>
+            </datepicker>
+          </div>
+        </div>
+        <div style="display: inline-block;">
+          <label style="display: inline-block;">To: </label>
+          <div style="display: inline-block;margin-bottom: -6px;">
+            <datepicker date-format="yyyy-MM-dd">
+              <input ng-model="search_data.final_date" type="text"/>
+            </datepicker>
+          </div>
+        </div>
+      </div>
+      <p>
+        <button ng-click="search()">Search</button>
+      </p>
+    </div>
+    <div ng-if="result.length > 0">
+      <p>Results:</p>
+      <div ng-if="errors" style="color: red;">
+        <div ng-repeat="(key, field) in errors">
+          <p ng-if="key != 'non_field_errors'">{{ key }}:</p>
+          <ul>
+            <li ng-repeat="error in field">{{ error }}</li>
+          </ul>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Room</th>
+            <th>Machine</th>
+            <th>Status</th>
+            <th>Start</th>
+            <th>End</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat-start="job in result track by job.id">
+            <td style="min-width: 18px;">
+              <i class="fa fa-check" style="color: green;" ng-if="successful_save_job==job"></i>
+              <i class="fa fa-times" style="color: red;" ng-if="error_save_job==job"></i>
+            </td>
+            <td>
+              <button ng-click="toggleShowLineItems(job)">
+                <span ng-show="!job.show_line_items">+</span>
+                <span ng-show="job.show_line_items">-</span>
+              </button>
+            </td>
+            <td><input type="text" name="description" ng-model="job.description"></td>
+            <td>
+              <select ng-options="type for type in types track by type" 
+                      ng-model="job.job_type">
+              </select>
+            </td>
+            <td>
+              <select ng-options="room.id as room.id for room in laundry_rooms" 
+                      ng-model="job.laundry_room">
+                <option value="" selected="selected">Laundry Room</option>
+              </select>
+            </td>
+            <td>
+              <select ng-options="machine.id as machine.id for machine in machines" 
+                      ng-model="job.machine">
+                <option value="" selected="selected">Machine</option>
+              </select>
+            </td>
+            <td>
+              <select ng-options="status for status in statuses track by status" 
+                      ng-model="job.status">
+              </select>
+            </td>
+            <td ng-class="{'has-error': errors.start_date && error_save_job==job}">
+              <div style="display: inline-block;">
+                <datepicker date-format="yyyy-MM-dd">
+                  <input ng-model="job.start_date" type="text" style="width: 100px;"/>
+                </datepicker>
+              </div>
+            </td>
+            <td ng-class="{'has-error': errors.final_date && error_save_job==job}">
+              <div style="display: inline-block;">
+                <datepicker date-format="yyyy-MM-dd">
+                  <input ng-model="job.final_date" type="text" style="width: 100px;"/>
+                </datepicker>
+              </div>
+            </td>
+            <td>
+              <button ng-click="saveJob(job)">Save</button>
+            </td>
+          </tr>
+          <tr ng-repeat-end ng-show="job.show_line_items">
+            <td colspan="9">
+              <table style="margin-left: 50px;">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>Finish Date</th>
+                    <th>Tech</th>
+                    <th>Time (min)</th>
+                    <th>Description</th>
+                    <th>Cost</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="line_item in job.line_items track by line_item.id">
+                    <td style="min-width: 18px;">
+                      <i class="fa fa-check" style="color: green;" ng-if="successful_save_line_item==line_item"></i>
+                      <i class="fa fa-times" style="color: red;" ng-if="error_save_line_item==line_item"></i>
+                    </td>
+                    <td ng-class="{'has-error': errors.line_item_type && error_save_line_item==line_item}">
+                      <select ng-options="line_item_type for line_item_type in line_item_types" 
+                              ng-model="line_item.line_item_type">
+                      </select>
+                    </td>
+                    <td ng-class="{'has-error': errors.status && error_save_line_item==line_item}">
+                      <select ng-options="status for status in line_item_statuses" 
+                              ng-model="line_item.status">
+                      </select>
+                    </td>
+                    <td ng-class="{'has-error': errors.start_date && error_save_line_item==line_item}">
+                      <div style="display: inline-block;">
+                        <datepicker date-format="yyyy-MM-dd">
+                          <input ng-model="line_item.start_date" type="text" style="width: 100px;"/>
+                        </datepicker>
+                      </div>
+                    </td>
+                    <td ng-class="{'has-error': errors.finish_date && error_save_line_item==line_item}">
+                      <div style="display: inline-block;">
+                        <datepicker date-format="yyyy-MM-dd">
+                          <input ng-model="line_item.finish_date" type="text" style="width: 100px;"/>
+                        </datepicker>
+                      </div>
+                    </td>
+                    <td ng-class="{'has-error': errors.technician && error_save_line_item==line_item}">
+                      <select ng-options="technician.id as technician.id for technician in technicians" 
+                              ng-model="line_item.technician">
+                        <option value="" selected="selected">Technician</option>
+                      </select>
+                    </td>
+                    <td ng-class="{'has-error': errors.time && error_save_line_item==line_item}">
+                      <input type="number" name="time" ng-model="line_item.time">
+                    </td>
+                    <td><input type="text" name="description" ng-model="line_item.description"></td>
+                    <td ng-class="{'has-error': errors.cost && error_save_line_item==line_item}">
+                      <span ng-if="checkEmployee(line_item)">{{ line_item.cost }}</span>
+                      <span ng-if="!checkEmployee(line_item)"><input type="text" name="cost" ng-model="line_item.cost"></span>
+                    </td>
+                    <td>
+                      <button ng-click="saveLineItem(line_item)">Save</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="7">
+                      <button ng-click="toggleShowNewLineItemForm(job)">Create new line item</button>
+
+                      <form ng-show="job.show_new_line_item_form">
+                        <div ng-if="new_line_item_errors.non_field_errors" style="color: red;">
+                          <p ng-repeat="error in new_line_item_errors.non_field_errors">{{ error }}</p>
+                        </div>
+                        <p ng-if="new_line_item_sucess" style="color: green">Added</p>
+                        <div ng-class="{'has-error': new_line_item_errors.technician}">
+                          <label>Technician: </label>
+                          <select ng-options="technician.id as technician.id for technician in technicians" 
+                                  ng-model="new_line_item.technician">
+                            <option value="" selected="selected">Technician</option>
+                          </select>
+                          <p ng-if="new_line_item_errors.technician">
+                            <span ng-repeat="error in new_line_item_errors.technician">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.line_item_type}">
+                          <label>Type: </label>
+                          <select ng-options="line_item_type for line_item_type in line_item_types" 
+                                  ng-model="new_line_item.line_item_type">
+                            <option value="" selected="selected">Type</option>
+                          </select>
+                          <p ng-if="new_line_item_errors.line_item_type">
+                            <span ng-repeat="error in new_line_item_errors.line_item_type">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.status}">
+                          <label>Status: </label>
+                          <select ng-options="status for status in line_item_statuses" 
+                                  ng-model="new_line_item.status">
+                            <option value="" selected="selected">Status</option>
+                          </select>
+                          <p ng-if="new_line_item_errors.status">
+                            <span ng-repeat="error in new_line_item_errors.status">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.description}">
+                          <label>Description: </label>
+                          <input type="text" name="description" ng-model="new_line_item.description">
+                          <p ng-if="new_line_item_errors.description">
+                            <span ng-repeat="error in new_line_item_errors.description">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.start_date}">
+                          <div style="display: inline-block;">
+                            <label style="display: inline-block;">Start date: </label>
+                            <div style="display: inline-block;">
+                              <datepicker date-format="yyyy-MM-dd">
+                                <input ng-model="new_line_item.start_date" type="text"/>
+                              </datepicker>
+                            </div>
+                          </div>
+                          <p ng-if="new_line_item_errors.start_date">
+                            <span ng-repeat="error in new_line_item_errors.start_date">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.finish_date}">
+                          <div style="display: inline-block;">
+                            <label style="display: inline-block;">Finish date: </label>
+                            <div style="display: inline-block;">
+                              <datepicker date-format="yyyy-MM-dd">
+                                <input ng-model="new_line_item.finish_date" type="text"/>
+                              </datepicker>
+                            </div>
+                          </div>
+                          <p ng-if="new_line_item_errors.finish_date">
+                            <span ng-repeat="error in new_line_item_errors.finish_date">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.time}">
+                          <label>Time: </label>
+                          <input type="number" name="time" ng-model="new_line_item.time">
+                          <p ng-if="new_line_item_errors.time">
+                            <span ng-repeat="error in new_line_item_errors.time">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div ng-class="{'has-error': new_line_item_errors.cost}">
+                          <label>Cost: </label>
+                          <input type="text" name="cost" ng-model="new_line_item.cost">
+                          <p ng-if="new_line_item_errors.cost">
+                            <span ng-repeat="error in new_line_item_errors.cost">{{ error }} </span>
+                          </p>
+                        </div>
+                        <div>
+                          <button ng-click="saveNewLineItem(new_line_item, job)" ng-disabled="!new_line_item">Save</button>
+                        </div>
+                      </form>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      <button ng-click="toggleShowNewJobForm()">Create new job</button>
+    </p>
+    <form ng-show="show_new_job_form">
+      <div ng-if="new_job_errors.non_field_errors" style="color: red;">
+        <p ng-repeat="error in new_job_errors.non_field_errors">{{ error }}</p>
+      </div>
+      <p ng-if="new_job_sucess" style="color: green">Added</p>
+      <div>
+        <label>Description: </label>
+        <input type="text" name="description" ng-model="new_job.description">
+      </div>
+      <div ng-class="{'has-error': new_job_errors.job_type}">
+        <label>Job Type: </label>
+        <select ng-options="type for type in types track by type" 
+                ng-model="new_job.job_type">
+          <option value="" selected="selected">Type</option>
+        </select>
+        <p ng-if="new_job_errors.job_type">
+          <span ng-repeat="error in new_job_errors.job_type">{{ error }} </span>
+        </p>
+      </div>
+      <div>
+        <label>Laudry room: </label>
+        <select ng-options="room.id as room.id for room in laundry_rooms" 
+                ng-model="new_job.laundry_room">
+          <option value="" selected="selected">Laundry Room</option>
+        </select>
+      </div>
+      <div>
+        <label>Machine: </label>
+        <select ng-options="machine.id as machine.id for machine in machines" 
+                ng-model="new_job.machine">
+          <option value="" selected="selected">Machine</option>
+        </select>
+      </div>
+      <div ng-class="{'has-error': new_job_errors.status}">
+        <label>Job Status: </label>
+        <select ng-options="status for status in statuses track by status" 
+                ng-model="new_job.status">
+          <option value="" selected="selected">Status</option>
+        </select>
+        <p ng-if="new_job_errors.status">
+          <span ng-repeat="error in new_job_errors.status">{{ error }} </span>
+        </p>
+      </div>
+      <div ng-class="{'has-error': new_job_errors.start_date}">
+        <div style="display: inline-block;">
+          <label style="display: inline-block;">Start date: </label>
+          <div style="display: inline-block;">
+            <datepicker date-format="yyyy-MM-dd">
+              <input ng-model="new_job.start_date" type="text"/>
+            </datepicker>
+          </div>
+        </div>
+        <p ng-if="new_job_errors.start_date">
+          <span ng-repeat="error in new_job_errors.start_date">{{ error }} </span>
+        </p>
+      </div>
+      <div ng-class="{'has-error': new_job_errors.final_date}">
+        <div style="display: inline-block;">
+          <label style="display: inline-block;">Final date: </label>
+          <div style="display: inline-block;">
+            <datepicker date-format="yyyy-MM-dd">
+              <input ng-model="new_job.final_date" type="text"/>
+            </datepicker>
+          </div>
+        </div>
+        <p ng-if="new_job_errors.final_date">
+          <span ng-repeat="error in new_job_errors.final_date">{{ error }} </span>
+        </p>
+      </div>
+      <div>
+        <button ng-click="saveNewJob(new_job)" ng-disabled="!new_job">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endverbatim %}
+{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'js/node_modules/angular/angular.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/node_modules/angularjs-datepicker/src/js/angular-datepicker.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/apps/expense_tracker/app.js' %}"></script>
+{% endblock %}

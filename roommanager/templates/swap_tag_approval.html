@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <style>
+            #action-button{
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        {% include "swap_tag_approval_email.html" %}
+    </body>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Update">
+    </form>
+</html>

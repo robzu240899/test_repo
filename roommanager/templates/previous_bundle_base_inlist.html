@@ -1,0 +1,62 @@
+{% load hardwarepiecestags %}
+
+<ul>
+    <li>Room: {{bundle_change.previous_bundle.location}}</li>
+    <li id='machine' 
+    {% if bundle_change.change_type == "MACHINE_CHANGE" %}
+        style="font-weight: bold; background-color: #FFFF00"
+    {% endif %}>                            
+        {% if bundle_change.previous_bundle.machine %}
+            Machine: {{bundle_change.previous_bundle.machine.asset_code}}
+            {% get_asset_urls bundle_change.previous_bundle.machine.asset_code "MACHINE" as machine_urls %}
+                {% if machine_urls %}
+                    {% for url in machine_urls %}
+                        <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                    {% endfor %}
+                {% endif %}
+            {% if bundle_change.previous_bundle.machine.asset_picture %}
+                <a href="{{bundle_change.previous_bundle.machine.asset_picture}}" target="_blank">
+                    (Asset Picture)
+                </a>
+            {% endif %}
+            {% if bundle_change.previous_bundle.machine.asset_serial_picture %}
+                <a href="{{bundle_change.previous_bundle.machine.asset_serial_picture}}" target="_blank">
+                    (Asset Serial Picture)
+                </a>
+            {% endif %}
+        {% else %}
+                Machine: None
+        {% endif %}
+    </li>
+    <li id='card-reader' 
+        {% if bundle_change.change_type == "CARD_READER_CHANGE" %}
+            style="font-weight: bold; background-color: #FFFF00"
+        {% endif %}>
+        Card Reader: {{bundle_change.previous_bundle.card_reader}}
+        {% if bundle_change.previous_bundle.card_reader and bundle_change.previous_bundle.card_reader.asset_code %}
+            {% get_asset_urls bundle_change.previous_bundle.card_reader.asset_code "CARD_READER" as card_reader_urls %}
+            {% if card_reader_urls %}
+                {% for url in card_reader_urls %}
+                    <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    </li>                        
+    <li id='slot'                        
+    {% if bundle_change.change_type == "SLOT_CHANGE" %}
+        style="font-weight: bold; background-color: #FFFF00"
+    {% endif %}>                            
+        Slot: {{bundle_change.previous_bundle.slot}}
+        {% if bundle_change.previous_bundle.slot %}
+        {% get_asset_urls bundle_change.previous_bundle.card_reader.asset_code "SLOT" as slot_urls %}
+            {% if slot_urls %}
+                {% for url in slot_urls %}
+                    <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+                {% endfor %}
+            {% endif %}
+            
+        {% endif %}
+    </li>
+    <li>Start Time: {{bundle_change.previous_bundle.start_time}}</li>
+    <li>Bundle Type: {{bundle_change.previous_bundle.bundle_type}}</li>
+</ul>

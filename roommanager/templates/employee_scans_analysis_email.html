@@ -1,0 +1,24 @@
+<html>
+<body>
+    <b>We detected at least one machine start done by you in the rooms below, and the following machines were not
+        either started or scanned:</b>
+
+    {% for room,room_data in data.items %}
+    <h3>Room: {{room}}</h3>
+        <p><b>Non-Started Slots: </b></p>
+        <ul>
+            {% for slot in room_data.non_started_slots %}
+                <li>{{slot}}</li>
+            {% endfor %}
+        </ul>
+
+        <p><b>Non-Scanned Slots: </b></p>
+        <ul>
+            {% for slot in room_data.non_scanned_slots %}
+                <li>{{slot}}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+</body>
+</html>

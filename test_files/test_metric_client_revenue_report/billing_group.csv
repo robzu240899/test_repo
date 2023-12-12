@@ -1,0 +1,4 @@
+id,display_name,schedule_type
+1,billing_group_constant,CONSTANT
+2,billing_group_time,TIME
+3,billing_group_revenue,GROSS_REVENUE

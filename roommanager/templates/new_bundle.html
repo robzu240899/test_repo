@@ -1,0 +1,37 @@
+{% load hardwarepiecestags %}
+
+<html>
+<p>You created a Hardware Bundle</p>
+
+<p>Location: {{location}} <br>
+Time: {{timestamp}}</p>
+
+<p>New Bundle:<p>
+
+<p>Machine: {{new_machine}} (Make&Model: {{new_machine.get_asset_model}})
+{% get_asset_urls new_machine.asset_code 'MACHINE' as machine_urls %}    
+{% if machine_urls %}
+    {% for url in machine_urls %}
+        <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+    {% endfor %}
+{% endif %}
+<br>
+Slot: {{slot}} 
+{% get_asset_urls slot.id 'SLOT' as slot_urls %}    
+{% if slot_urls %}
+    {% for url in slot_urls %}
+        <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+    {% endfor %}
+{% endif %}
+</a>
+<br>
+Card Reader: {{card_reader.card_reader_tag}} (Model: {{card_reader.model}} )
+{% get_asset_urls card_reader.card_reader_tag 'CARD_READER' as card_reader_urls %}
+{% if card_reader_urls %}    
+    {% for url in card_reader_urls %}
+    <a href="{{url.0}}" target='_blank'>({{url.1}})</a>
+    {% endfor %}
+{% endif %}
+</p>
+
+</html>

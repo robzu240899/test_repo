@@ -1,0 +1,15 @@
+<html>
+
+<body>
+    {{form.errors}}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Send">
+    </form>
+
+    {% if msg %}
+    <b>{{msg}}</b>
+    {% endif %}
+</body>
+</html>

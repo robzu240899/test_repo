@@ -1,0 +1,83 @@
+<html>
+
+<body>
+    
+    <h3>Repair or Replace Report</h3>
+
+    <div>
+        <p>{{machine}}</p>
+        <p>Make & Model: {{machine.get_asset_model}}</p>
+        {% if machine.maintainx_id %}
+            <p><a href="https://app.getmaintainx.com/assets/{{machine.maintainx_id}}" target="_blank">Maintainx Asset Record</a></p>
+        {% endif %}
+        <p><b>Cycle count:</b> {{meter_count}}</p>
+        <p><b>First Scan Date / Creation Date:</b> {{first_scan_date}}</p>
+        <p><b>HardwareBundles History:</b> </p>
+        <ul>
+        {% for bundle in bundles_history %}
+                <li><p>Slot: {{bundle.slot}}. Start Time: {{bundle.start_time}}. End Time: {{bundle.end_time}}</p></li>
+        {% endfor %}
+        </ul>
+        <p><b>Total Revenue Earned:</b> ${{revenue_earned.total}}</p>
+        <p><b>Revenue Earned Period:</b> {{date_period}}</p>
+        <p><b>Upkeep Work Orders:</b> </p>
+        <ul>
+            {% for order in upkeep_work_orders %}
+                <li>
+                    <p><b>Title:</b> {{order.title}}</p>
+                    <p><b>Description:</b> {{order.description}}</p>
+                    <p><b>Category:</b> {{order.category}}</p>
+                    <p><b>Status:</b> {{order.status}}</p>
+                    <p><b>Priority Level:</b> {{order.priority_level}}</p>
+                    <p><b>Assigned By:</b> {{order.assigned_by_upkeep_username}}</p>
+                    <p><b>Assigned To:</b> {{order.assigned_to_upkeep_username}}</p>
+                    <p><b>Completed By:</b> {{order.completed_by_upkeep_username}}</p>
+                    <p><b>Creation Date:</b>  {{order.created_date}}</p>
+                    <p><b>Update Date:</b> {{order.updated_date}}</p>
+                    <p><b>Completion Date:</b> {{order.competion_date}}</p>
+                    <p><a href="https://app.onupkeep.com/web/work-orders/{{order.upkeep_id}}"><b>Work Order URL</b></a></p>
+                    <p><b>Parts:</b>
+                        <ul>
+                            {% for part in order.parts.all %}
+                                <li>Name: {{part.name}}</li>
+                                <li>Quantity: {{part.quantity}}</li>
+                                <li>Details: {{part.details}}</li>
+                                <li>Serial: {{part.serial}}</li>
+                            {% endfor %}
+                        </ul>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+        <p><b>Maintainx Work Orders:</b> </p>
+        <ul>
+            {% for order in maintainx_work_orders %}
+                <li>
+                    <p><b>Title:</b> {{order.title}}</p>
+                    <p><b>Description:</b> {{order.description}}</p>
+                    <p><b>Category:</b> {{order.category}}</p>
+                    <p><b>Status:</b> {{order.status}}</p>
+                    <p><b>Priority Level:</b> {{order.priority_level}}</p>
+                    <p><b>Assigned By:</b> {{order.assigned_by_id}}</p>
+                    <p><b>Assigned To:</b> {{order.assigned_to_upkeep_username}}</p>
+                    <p><b>Completed By:</b> {{order.completed_by_id}}</p>
+                    <p><b>Creation Date:</b>  {{order.created_date}}</p>
+                    <p><b>Update Date:</b> {{order.updated_date}}</p>
+                    <p><b>Completion Date:</b> {{order.completed_date}}</p>
+                    <p><a href="https://app.getmaintainx.com/workorders/{{order.maintainx_id}}"><b>Work Order URL</b></a></p>
+                    <p><b>Parts:</b>
+                        <ul>
+                            {% for part in order.parts.all %}
+                                <li>Name: {{part.name}}</li>
+                                <li>Description: {{part.description}}</li>
+                                <li>Serial: {{part.barcode}}</li>
+                            {% endfor %}
+                        </ul>
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

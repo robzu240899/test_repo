@@ -1,0 +1,16 @@
+<html>
+<head>
+    <style>
+        #action-button{
+            display: none;
+        }
+    </style>
+</head>
+    {% include "asset_mapout_approval_email.html" %}
+
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Update">
+</form>
+</html>
